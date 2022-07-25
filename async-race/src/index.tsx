@@ -11,14 +11,12 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Example />
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="garage" element={<Garage />} />
-        <Route path="winners" element={<Winners />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Example />
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="garage" element={<Garage />} />
+      <Route path="winners" element={<Winners />} />
+    </Routes>
+  </BrowserRouter>,
 );
