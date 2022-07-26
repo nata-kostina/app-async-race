@@ -14,20 +14,18 @@ const makeUrl = (request: FetchRequest) => {
 };
 
 const handleResponse = (response: Response) => {
-  if (!response.ok) throw new Error();
+  if (!response.ok) throw new Error(`Ooops! ${response.status} ${response.statusText}`);
   return response;
 };
 
-const load = (request: FetchRequest) => {
+function load <T>(request: FetchRequest): Promise<T> {
   const fetchUrl = makeUrl(request);
-  debugger;
-  const promise = fetch(fetchUrl)
+  console.log('Before Fetch');
+  return fetch(fetchUrl)
     .then((response) => handleResponse(response))
-    .then((res) => res.json())
+    .then((res): Promise<T> => res.json())
     .then((data) => data)
-    .catch(() => console.log('The response status is not OK'));
-  console.log('Promise', promise);
-  console.log('END LOAD');
-};
+    .catch((error: Error) => { throw new Error(error.message); });
+}
 
 export default load;
