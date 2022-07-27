@@ -1,38 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from '../../components/ui/Pagination/Pagination';
 import Form from './Form';
-import AppLoader from '../../services/AppLoader';
+// import AppLoader from '../../services/AppLoader';
 import { Car } from '../../types/types';
+import CarTable from './CarTable';
+import AppLoader from '../../services/AppLoader';
 
 function Garage() {
   const [currentPage, setCurrentPage] = useState(1);
-  debugger;
   const onPageChanged = (value: number) => setCurrentPage(value);
 
   const [cars, setCars] = useState<Car[]>([]);
-
   useEffect(() => {
-    debugger;
+    let isActual = true;
     const fetchData = async () => {
-      const data = await AppLoader.getCars(currentPage);
-      setCars(data);
+      const data: Car[] = await AppLoader.getCars(currentPage);
+      console.log('Data', data);
+      if (isActual) {
+        setCars(data);
+      } else console.log('This fetch is not actual');
     };
     fetchData();
+    return () => {
+      isActual = false;
+    };
   }, [currentPage]);
 
   return (
     <div className="Garage">
       Garage
       <Form />
-      {cars.map((car) => (
-        <div>
-          {car.id}
-          {' '}
-          {car.name}
-          {' '}
-          {car.color}
-        </div>
-      ))}
+      <CarTable cars={cars} />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
     </div>
   );
