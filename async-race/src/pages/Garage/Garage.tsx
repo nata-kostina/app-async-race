@@ -25,10 +25,10 @@ function Garage() {
     };
   }, [currentPage]);
 
-  const updateCar = async (values: UpdateCarParams, id: string) => {
+  const updateCar = async (values: UpdateCarParams, car: Car) => {
     try {
-      const data: Car = await AppLoader.updateCar(values, id);
-      setCars(cars.map((car) => (car.id.toString() === id ? { ...car, ...data } : car)));
+      const data: Car = await AppLoader.updateCar(values, car.id.toString());
+      setCars(cars.map((c) => (c.id === car.id ? { ...car, ...data } : car)));
     } catch (e) {
       console.log('Ooops! Updating was failed');
     }

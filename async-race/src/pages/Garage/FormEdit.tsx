@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import Form from '../../components/ui/Form/Form';
 import FormInput from '../../components/ui/Form/FormInput';
-import { UpdateCarParams } from '../../types/types';
+import { Car, UpdateCarParams } from '../../types/types';
 
 interface FormEditProps {
   onCarUpdated: (values: UpdateCarParams) => void;
+  carToEdit: Car;
 }
 
-function FormEdit({ onCarUpdated }: FormEditProps) {
+function FormEdit({ onCarUpdated, carToEdit }: FormEditProps) {
   const [form, setForm] = useState({
-    name: '',
-    color: '#000000',
+    name: carToEdit.name,
+    color: carToEdit.color,
   });
 
   const onNameChanged = (n: string) => setForm({ ...form, name: n });
