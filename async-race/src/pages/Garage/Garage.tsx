@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from '../../components/ui/Pagination/Pagination';
-// import AppLoader from '../../services/AppLoader';
 import { Car, UpdateCarParams } from '../../types/types';
 import CarTable from './CarTable';
 import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
 import { generateRandomCars } from '../../utils/utils';
 
-function Garage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const onPageChanged = (value: number) => setCurrentPage(value);
-
+const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
+  const [totalCarsNum, setTotalCarsNum] = useState('0');
   useEffect(() => {
     let isActual = true;
     const fetchData = async () => {
       const data: Car[] = await AppLoader.getCars(currentPage);
       if (isActual) {
+        const num = await AppLoader.getTotalCount();
+        setTotalCarsNum(num);
         setCars(data);
       } else console.log('This fetch is not actual');
     };
@@ -24,12 +23,21 @@ function Garage() {
     return () => {
       isActual = false;
     };
-  }, [currentPage]);
+  }, [currentPage, hasBeenUpdated]);
+  return [cars, setCars, totalCarsNum];
+};
 
+function Garage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const onPageChanged = (value: number) => setCurrentPage(value);
+
+  const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
+  // eslint-disable-next-line max-len
+  const [cars, setCars, totalCarsNum] = useCars(currentPage, hasBeenUpdated) as [Car[], React.Dispatch<React.SetStateAction<Car[]>>, string];
   const updateCar = async (values: UpdateCarParams, car: Car) => {
     try {
-      const data: Car = await AppLoader.updateCar(values, car.id.toString());
-      setCars(cars.map((c) => (c.id === car.id ? { ...car, ...data } : car)));
+      await AppLoader.updateCar(values, car.id.toString());
+      setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
       console.log('Ooops! Updating was failed');
     }
@@ -38,7 +46,8 @@ function Garage() {
   const deleteCar = async (id: string) => {
     try {
       await AppLoader.deleteCar(id);
-      setCars(cars.filter((car) => (car.id.toString() !== id)));
+      debugger;
+      setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
       console.log('Ooops! Deleting was failed');
     }
@@ -58,6 +67,7 @@ function Garage() {
   return (
     <div className="Garage">
       Garage
+      <span>{totalCarsNum}</span>
       <FormCreate createCar={createCar} />
       <button type="button" onClick={generateCars}>Generate Random Cars</button>
       <CarTable cars={cars} updateCar={updateCar} deleteCar={deleteCar} />

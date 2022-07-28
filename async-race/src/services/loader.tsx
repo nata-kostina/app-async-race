@@ -19,7 +19,7 @@ const handleResponse = (response: Response) => {
   return response;
 };
 
-function load <T>(request: FetchRequest): Promise<T> {
+export function load <T>(request: FetchRequest): Promise<T> {
   const fetchUrl = makeUrl(request);
   return fetch(fetchUrl, {
     headers: {
@@ -31,6 +31,19 @@ function load <T>(request: FetchRequest): Promise<T> {
     .then((response) => handleResponse(response))
     .then((res): Promise<T> => res.json())
     .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); });
+}
+
+export function getHeaders(request: FetchRequest): Promise<Headers> {
+  const fetchUrl = makeUrl(request);
+  return fetch(fetchUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: request.method,
+    body: request.dataParams ? JSON.stringify(request.dataParams) : null,
+  })
+    .then((response) => { console.log(response); return response.headers; })
     .catch((error: Error) => { throw new Error(error.message); });
 }
 

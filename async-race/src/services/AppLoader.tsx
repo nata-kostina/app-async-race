@@ -1,6 +1,6 @@
 import { limitPerPage } from '../data/constants';
 import { Car, UpdateCarParams } from '../types/types';
-import load from './loader';
+import { load, getHeaders } from './loader';
 
 const AppLoader = {
   getCars: async (currentPage: number): Promise<Car[]> => load<Car[]>({
@@ -30,6 +30,13 @@ const AppLoader = {
     dataParams,
   })
     .then((data) => data),
+
+  getTotalCount: async (): Promise<string> => getHeaders({
+    url: 'garage',
+    method: 'GET',
+    queryParams: { _limit: '1' },
+  })
+    .then((headers: Headers) => headers.get('X-Total-Count') as string),
 };
 
 export default AppLoader;

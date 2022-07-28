@@ -35,3 +35,6 @@ src/App.css
 /tsconfig.eslint.json
 /tsconfig.json
 /src/assets
+
+
+src/pages/Example.tsx
