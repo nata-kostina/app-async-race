@@ -34,11 +34,20 @@ function Garage() {
     }
   };
 
+  const deleteCar = async (id: string) => {
+    try {
+      await AppLoader.deleteCar(id);
+      setCars(cars.filter((car) => (car.id.toString() !== id)));
+    } catch (e) {
+      console.log('Ooops! Deleting was failed');
+    }
+  };
+
   return (
     <div className="Garage">
       Garage
       <FormCreate />
-      <CarTable cars={cars} updateCar={updateCar} />
+      <CarTable cars={cars} updateCar={updateCar} deleteCar={deleteCar} />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
     </div>
   );

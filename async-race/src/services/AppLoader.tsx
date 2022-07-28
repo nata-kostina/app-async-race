@@ -17,6 +17,12 @@ const AppLoader = {
     dataParams,
   })
     .then((data) => data),
+
+  deleteCar: async (id: string): Promise<{}> => load<{}>({
+    url: `garage/${id}`,
+    method: 'DELETE',
+  })
+    .then((data) => data),
 // .catch((error: Error): Car => { console.log(error); return params; }),
 };
 
