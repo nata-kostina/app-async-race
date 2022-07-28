@@ -20,6 +20,8 @@ export interface Car {
   id: number,
 }
 
+export type CarValues = Omit<Car, 'id'>;
+
 export interface FormInputProps {
   id: string;
   label: string;

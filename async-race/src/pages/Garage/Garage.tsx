@@ -5,6 +5,7 @@ import { Car, UpdateCarParams } from '../../types/types';
 import CarTable from './CarTable';
 import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
+import { generateRandomCars } from '../../utils/utils';
 
 function Garage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,10 +53,13 @@ function Garage() {
     }
   };
 
+  const generateCars = () => generateRandomCars().forEach((car) => createCar(car));
+
   return (
     <div className="Garage">
       Garage
       <FormCreate createCar={createCar} />
+      <button type="button" onClick={generateCars}>Generate Random Cars</button>
       <CarTable cars={cars} updateCar={updateCar} deleteCar={deleteCar} />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
     </div>
