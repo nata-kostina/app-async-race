@@ -20,7 +20,6 @@ function CarTable({ cars, updateCar, deleteCar }:CarTableProps) {
     closeModal();
     updateCar(values, carToEdit);
   };
-  console.log('render', carToEdit);
   return (
     <div id="carTable">
       {!cars || cars.length === 0 ? 'There are no cars' : cars.map((car) => (

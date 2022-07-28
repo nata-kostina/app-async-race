@@ -23,7 +23,13 @@ const AppLoader = {
     method: 'DELETE',
   })
     .then((data) => data),
-// .catch((error: Error): Car => { console.log(error); return params; }),
+
+  createCar: async (dataParams: UpdateCarParams): Promise<Car> => load<Car>({
+    url: 'garage',
+    method: 'POST',
+    dataParams,
+  })
+    .then((data) => data),
 };
 
 export default AppLoader;

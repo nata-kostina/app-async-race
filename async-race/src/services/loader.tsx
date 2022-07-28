@@ -21,13 +21,9 @@ const handleResponse = (response: Response) => {
 
 function load <T>(request: FetchRequest): Promise<T> {
   const fetchUrl = makeUrl(request);
-  console.log(fetchUrl);
-  const par = request.dataParams ? JSON.stringify(request.dataParams) : null;
-  console.log('Before Fetch', par);
   return fetch(fetchUrl, {
     headers: {
       'Content-Type': 'application/json',
-      // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     method: request.method,
     body: request.dataParams ? JSON.stringify(request.dataParams) : null,

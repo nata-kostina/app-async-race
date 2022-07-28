@@ -13,10 +13,6 @@ function FormEdit({ onCarUpdated }: FormEditProps) {
     color: '#000000',
   });
 
-  const onEditClicked = () => {
-    onCarUpdated(form);
-  };
-
   const onNameChanged = (n: string) => setForm({ ...form, name: n });
   const onColorChanged = (c: string) => setForm({ ...form, color: c });
 
@@ -24,7 +20,7 @@ function FormEdit({ onCarUpdated }: FormEditProps) {
     <Form id="form_edit">
       <FormInput id="name" label="Name" type="text" val={form.name} placeholder="Enter a new name..." onChanged={onNameChanged} />
       <FormInput id="color" label="Color" type="color" val={form.color} onChanged={onColorChanged} />
-      <button type="button" onClick={onEditClicked}>Edit</button>
+      <button type="button" onClick={() => onCarUpdated(form)}>Edit</button>
     </Form>
   );
 }

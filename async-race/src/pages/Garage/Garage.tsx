@@ -43,10 +43,19 @@ function Garage() {
     }
   };
 
+  const createCar = async (values: UpdateCarParams) => {
+    try {
+      const data: Car = await AppLoader.createCar(values);
+      setCars([...cars, data]);
+    } catch (e) {
+      console.log('Ooops! Creating was failed');
+    }
+  };
+
   return (
     <div className="Garage">
       Garage
-      <FormCreate />
+      <FormCreate createCar={createCar} />
       <CarTable cars={cars} updateCar={updateCar} deleteCar={deleteCar} />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
     </div>
