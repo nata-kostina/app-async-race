@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormInputProps } from '../../../types/types';
 
 function FormInput({
-  id, label, type, val, placeholder = '',
+  id, label, type, val, placeholder = '', onChanged,
 }: FormInputProps) {
-  const [value, setValue] = useState(val);
-  const onValueChanged = (v: string) => setValue(v);
   return (
     <div className="formInput">
       <label htmlFor={id}>
@@ -14,8 +12,8 @@ function FormInput({
           id={id}
           type={type}
           placeholder={placeholder}
-          value={value}
-          onChange={(event) => onValueChanged(event.target.value)}
+          value={val}
+          onChange={(event) => onChanged(event.target.value)}
         />
       </label>
     </div>

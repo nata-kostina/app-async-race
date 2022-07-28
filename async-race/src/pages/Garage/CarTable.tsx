@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../../components/ui/Modal/Modal';
-import { Car } from '../../types/types';
+import { Car, UpdateCarParams } from '../../types/types';
 import useModal from '../../components/ui/Modal/useModal';
-// import Form from '../../components/ui/Form/Form';
 import FormEdit from './FormEdit';
 
 interface CarTableProps {
-  cars: Car[]
+  cars: Car[],
+  updateCar: (values: UpdateCarParams, id: string) => void,
 }
-function CarTable({ cars }:CarTableProps) {
+function CarTable({ cars, updateCar }:CarTableProps) {
   const [isShown, openModal, closeModal] = useModal();
-  const onEditClicked = () => openModal();
   const onCloseClicked = () => closeModal();
 
+  const [carToEdit, setCarToEdit] = useState('');
+  const onEditClicked = (carId: number) => { setCarToEdit(carId.toString()); openModal(); };
+  const onCarUpdated = (values: UpdateCarParams) => {
+    closeModal();
+    updateCar(values, carToEdit);
+  };
+  console.log('render', carToEdit);
   return (
     <div id="carTable">
       {!cars || cars.length === 0 ? 'There are no cars' : cars.map((car) => (
@@ -22,13 +28,13 @@ function CarTable({ cars }:CarTableProps) {
           {car.name}
           {' '}
           {car.color}
-          <button type="button" onClick={onEditClicked}>Edit</button>
+          <button type="button" onClick={() => onEditClicked(car.id)}>Edit</button>
         </div>
       ))}
       <Modal
         isShown={isShown}
         headerText="Edit Modal"
-        ModalContent={FormEdit}
+        ModalContent={() => FormEdit({ onCarUpdated })}
         onCloseClicked={onCloseClicked}
       />
     </div>

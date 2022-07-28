@@ -3,13 +3,14 @@ import { FetchRequest } from '../types/types';
 
 const makeUrl = (request: FetchRequest) => {
   const url = new URL(`${baseUrl}/${request.url}`);
-  if (request.params) {
-    const entries = Object.entries(request.params);
+  if (request.queryParams) {
+    const entries = Object.entries(request.queryParams);
     entries.forEach((entry) => {
       const [key, value] = entry;
       url.searchParams.append(key, value);
     });
   }
+
   return url.toString();
 };
 
@@ -20,8 +21,17 @@ const handleResponse = (response: Response) => {
 
 function load <T>(request: FetchRequest): Promise<T> {
   const fetchUrl = makeUrl(request);
-  console.log('Before Fetch');
-  return fetch(fetchUrl)
+  console.log(fetchUrl);
+  const par = request.dataParams ? JSON.stringify(request.dataParams) : null;
+  console.log('Before Fetch', par);
+  return fetch(fetchUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    method: request.method,
+    body: request.dataParams ? JSON.stringify(request.dataParams) : null,
+  })
     .then((response) => handleResponse(response))
     .then((res): Promise<T> => res.json())
     .then((data) => data)

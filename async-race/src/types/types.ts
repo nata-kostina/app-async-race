@@ -1,9 +1,18 @@
 export interface FetchRequest {
   url: string;
-  params?: {
+  method: string;
+  queryParams?: {
+    [key: string]: string;
+  }
+  dataParams?: {
     [key: string]: string;
   }
 }
+
+export type UpdateCarParams = {
+  name: string,
+  color: string
+};
 
 export interface Car {
   name: string,
@@ -17,6 +26,7 @@ export interface FormInputProps {
   type: string;
   val: string;
   placeholder?: string;
+  onChanged: (value: string) => void;
 }
 
 export interface ModalProps {

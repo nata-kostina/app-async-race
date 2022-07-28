@@ -5,14 +5,12 @@ import './index.css';
 import App from './App';
 import Garage from './pages/Garage/Garage';
 import Winners from './pages/Winners';
-import Example from './pages/Test';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <BrowserRouter>
-    <Example />
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="garage" element={<Garage />} />
