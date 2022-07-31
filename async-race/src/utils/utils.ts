@@ -19,3 +19,8 @@ export const generateRandomCars = (): CarValues[] => {
   }
   return cars;
 };
+
+export const calculateTime = (velocity: number, distance: number): number => {
+  const time = Number(parseFloat((distance / velocity).toString()).toFixed(2));
+  return time;
+};

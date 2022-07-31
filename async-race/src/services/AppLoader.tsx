@@ -1,5 +1,8 @@
+/* eslint-disable max-len */
 import { limitPerPage } from '../data/constants';
-import { Car, UpdateCarParams } from '../types/types';
+import {
+  Car, EngineResponse, EngineStatus, UpdateCarParams, EngineDriveModeResponse,
+} from '../types/types';
 import { load, getHeaders } from './loader';
 
 const AppLoader = {
@@ -37,6 +40,30 @@ const AppLoader = {
     queryParams: { _limit: '1' },
   })
     .then((headers: Headers) => headers.get('X-Total-Count') as string),
+
+  startEngine: async (id: string, status: EngineStatus): Promise<EngineResponse> => load<EngineResponse>({
+    url: 'engine',
+    method: 'PATCH',
+    queryParams: { id, status },
+  })
+    .then((data) => data),
+  // .catch((error: Error): Car[] => { console.log(error); return []; }),
+
+  stopEngine: async (id: string, status: EngineStatus): Promise<EngineResponse> => load<EngineResponse>({
+    url: 'engine',
+    method: 'PATCH',
+    queryParams: { id, status },
+  })
+    .then((data) => data)
+    .catch((error: string) => { throw new Error(error); }),
+
+  driveCar: async (id: string, status: EngineStatus): Promise<EngineDriveModeResponse> => load<EngineDriveModeResponse>({
+    url: 'engine',
+    method: 'PATCH',
+    queryParams: { id, status },
+  })
+    .then((data) => data)
+    .catch((error: string) => { throw new Error(error); }),
 };
 
 export default AppLoader;

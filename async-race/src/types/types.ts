@@ -37,3 +37,18 @@ export interface ModalProps {
   headerText: string;
   onCloseClicked: () => void;
 }
+
+export enum EngineStatus {
+  STARTED = 'started',
+  STOPPED = 'stopped',
+  DRIVE = 'drive',
+}
+
+export interface EngineResponse {
+  velocity: number,
+  distance: number,
+}
+
+export interface EngineDriveModeResponse {
+  'success': true
+}

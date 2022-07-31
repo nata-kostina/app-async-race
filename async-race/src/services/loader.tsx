@@ -43,7 +43,7 @@ export function getHeaders(request: FetchRequest): Promise<Headers> {
     method: request.method,
     body: request.dataParams ? JSON.stringify(request.dataParams) : null,
   })
-    .then((response) => { console.log(response); return response.headers; })
+    .then((response) => response.headers)
     .catch((error: Error) => { throw new Error(error.message); });
 }
 

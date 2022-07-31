@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Pagination from '../../components/ui/Pagination/Pagination';
-import { Car, UpdateCarParams } from '../../types/types';
+import { Car, EngineStatus, UpdateCarParams } from '../../types/types';
 import CarTable from './CarTable';
 import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
-import { generateRandomCars } from '../../utils/utils';
+import { generateRandomCars, calculateTime } from '../../utils/utils';
+import { startAnimation } from '../../utils/animation';
 
 const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
@@ -46,7 +48,6 @@ function Garage() {
   const deleteCar = async (id: string) => {
     try {
       await AppLoader.deleteCar(id);
-      debugger;
       setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
       console.log('Ooops! Deleting was failed');
@@ -64,6 +65,12 @@ function Garage() {
 
   const generateCars = () => generateRandomCars().forEach((car) => createCar(car));
 
+  // const startCar = async (id: string) => {
+  //   const { velocity, distance } = await AppLoader.startEngine(id, EngineStatus.STARTED);
+  //   const time = calculateTime(velocity, distance);
+  //   console.log(time);
+  //   // startAnimation(time);
+  // };
   return (
     <div className="Garage">
       Garage
