@@ -16,7 +16,8 @@ import FormCreate from './FormCreate';
 import { generateRandomCars, calculateTime, addTimeToAnimationElement } from '../../utils/utils';
 import { startEngine, getTimeOfAllCars } from './CarActions';
 import { useToggleBtn } from './hooks/CarHooks';
-import useDidMountEffect from '../../components/hooks/GeneralHooks';
+import useDidMountEffect from '../../hooks/GeneralHooks';
+import Modal from '../../components/ui/Modal/Modal';
 
 const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
@@ -43,6 +44,7 @@ function Garage() {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChanged = (value: number) => setCurrentPage(value);
 
+  const [showModal, setShowModal] = useState(false);
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
   const [hasBeenReset, setHasBeenReset] = useState(false);
   const [isRacing, setIsRacing] = useState(false);
@@ -87,6 +89,10 @@ function Garage() {
     setAsyncActionResults([]);
   };
   const [winner, setWinner] = useState({} as Car);
+  const showWinner = () => {
+
+  };
+  useDidMountEffect(showWinner, [winner]);
   const startRace = () => {
     async function raceAll(promises: Promise<DriveCarResult>[], ids: number[]): Promise<number> {
       if (promises.length === 0) {
@@ -104,6 +110,7 @@ function Garage() {
       console.log('Success Car ID', carId);
       const winnerCar = cars.find((car) => car.id === carId);
       setWinner(winnerCar as Car);
+      setShowModal(true);
       onFinishRacing(promises);
       return (winnerCar as Car).id as number;
     }
@@ -127,11 +134,12 @@ function Garage() {
     const result = asyncAction();
     setAsyncActionResults((prevState) => [...prevState, result]);
   };
-
   const reset = () => {
     setHasBeenReset(true);
   };
-
+  const onModalClosed = () => {
+    setShowModal(false);
+  };
   return (
     <div className="Garage">
       Garage
@@ -152,6 +160,17 @@ function Garage() {
         setHasBeenReset={setHasBeenReset}
       />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
+      <Modal
+        isShown={showModal}
+        headerText="Winner"
+        onCloseClicked={onModalClosed}
+      >
+        <div>
+          Winner is
+          {' '}
+          {winner.id}
+        </div>
+      </Modal>
     </div>
   );
 }

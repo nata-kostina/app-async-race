@@ -35,9 +35,9 @@ export interface FormInputProps {
 
 export interface ModalProps {
   isShown: boolean;
-  ModalContent: React.FunctionComponent;
   headerText: string;
   onCloseClicked: () => void;
+  children?: React.ReactNode;
 }
 
 export enum EngineStatus {

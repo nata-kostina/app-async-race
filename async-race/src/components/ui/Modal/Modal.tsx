@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { ModalProps } from '../../../types/types';
 
 function Modal({
-  isShown, ModalContent, headerText, onCloseClicked,
+  isShown, headerText, onCloseClicked, children,
 }: ModalProps) {
   const modal = (
     <div>
@@ -11,7 +11,7 @@ function Modal({
       <div className="modal">
         <div className="modal__inner">
           <div className="modal__header">{headerText}</div>
-          <div className="modal__content"><ModalContent /></div>
+          <div className="modal__content">{children}</div>
           <button type="button" onClick={() => onCloseClicked()}>Close</button>
         </div>
       </div>

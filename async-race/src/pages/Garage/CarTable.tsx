@@ -58,9 +58,10 @@ function CarTable({
       <Modal
         isShown={isShown}
         headerText="Edit Modal"
-        ModalContent={() => FormEdit({ onCarUpdated, carToEdit })}
         onCloseClicked={onCloseClicked}
-      />
+      >
+        <FormEdit onCarUpdated={onCarUpdated} carToEdit={carToEdit} />
+      </Modal>
     </div>
   );
 }
