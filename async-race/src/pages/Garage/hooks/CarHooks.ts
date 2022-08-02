@@ -17,3 +17,11 @@ export function useOnFinishAnimation(action: () => void) {
   }, [isFinished]);
   return [isFinished, setIsFinished];
 }
+
+export function useToggleRaceButton() {
+  const [isBtnRaceDisabled, setIsBtnStartDisabled] = useState(false);
+  const toggleButtons = () => {
+    setIsBtnStartDisabled(!isBtnRaceDisabled);
+  };
+  return [isBtnRaceDisabled, toggleButtons];
+}
