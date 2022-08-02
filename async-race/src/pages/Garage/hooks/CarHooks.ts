@@ -18,10 +18,10 @@ export function useOnFinishAnimation(action: () => void) {
   return [isFinished, setIsFinished];
 }
 
-export function useToggleRaceButton() {
-  const [isBtnRaceDisabled, setIsBtnStartDisabled] = useState(false);
+export function useToggleBtn() {
+  const [isBtnDisabled, setIsBtnDisabled] = useState(false);
   const toggleButtons = () => {
-    setIsBtnStartDisabled(!isBtnRaceDisabled);
+    setIsBtnDisabled(!isBtnDisabled);
   };
-  return [isBtnRaceDisabled, toggleButtons];
+  return [isBtnDisabled, toggleButtons];
 }

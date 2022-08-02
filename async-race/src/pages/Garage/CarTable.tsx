@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import Modal from '../../components/ui/Modal/Modal';
 import {
@@ -15,9 +16,11 @@ interface CarTableProps {
   animElements: AnimationElement[],
   setAnimElements: Dispatch<SetStateAction<AnimationElement[]>>,
   startDriving: (asyncAction: () => Promise<DriveCarResult>) => void,
+  hasBeenReset: boolean,
+  setHasBeenReset: Dispatch<SetStateAction<boolean>>,
 }
 function CarTable({
-  cars, updateCar, deleteCar, isRacing, animElements, setAnimElements, startDriving,
+  cars, updateCar, deleteCar, isRacing, animElements, setAnimElements, startDriving, hasBeenReset, setHasBeenReset,
 }: CarTableProps) {
   const [isShown, openModal, closeModal] = useModal();
   const onCloseClicked = () => closeModal();
@@ -47,6 +50,8 @@ function CarTable({
             animElements={animElements}
             setAnimElements={setAnimElements}
             startDriving={startDriving}
+            hasBeenReset={hasBeenReset}
+            setHasBeenReset={setHasBeenReset}
           />
         ))}
 

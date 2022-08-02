@@ -15,7 +15,8 @@ import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
 import { generateRandomCars, calculateTime, addTimeToAnimationElement } from '../../utils/utils';
 import { startEngine, getTimeOfAllCars } from './CarActions';
-import { useToggleRaceButton } from './hooks/CarHooks';
+import { useToggleBtn } from './hooks/CarHooks';
+import useDidMountEffect from '../../components/hooks/GeneralHooks';
 
 const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
@@ -43,9 +44,9 @@ function Garage() {
   const onPageChanged = (value: number) => setCurrentPage(value);
 
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
+  const [hasBeenReset, setHasBeenReset] = useState(false);
   const [isRacing, setIsRacing] = useState(false);
-  const [isBtnRaceDisabled, toggleButton] = useToggleRaceButton() as [boolean, () => void];
-
+  const [isBtnRaceDisabled, toggleRaceBtn] = useToggleBtn() as [boolean, () => void];
   // eslint-disable-next-line max-len
   const [cars, setCars, totalCarsNum] = useCars(currentPage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string];
   const updateCar = async (values: UpdateCarParams, car: Car) => {
@@ -79,14 +80,14 @@ function Garage() {
   const [animElements, setAnimElements] = useState([] as AnimationElement[]);
   const [asyncActionResults, setAsyncActionResults] = useState([] as Promise<DriveCarResult>[]);
   const onFinishRacing = async (promises: Promise<DriveCarResult>[]) => {
+    console.log('onFinishRacing');
     await Promise.allSettled(promises);
-    toggleButton();
+    toggleRaceBtn();
     setIsRacing(false);
     setAsyncActionResults([]);
   };
   const [winner, setWinner] = useState({} as Car);
-
-  useEffect(() => {
+  const startRace = () => {
     async function raceAll(promises: Promise<DriveCarResult>[], ids: number[]): Promise<number> {
       if (promises.length === 0) {
         onFinishRacing([]);
@@ -108,13 +109,15 @@ function Garage() {
     }
 
     if (asyncActionResults.length === cars.length) {
+      console.log('condition');
       const ids = cars.map((c) => c.id);
       raceAll(asyncActionResults, ids);
     }
-  }, [asyncActionResults]);
+  };
+  useDidMountEffect(startRace, [asyncActionResults]);
 
   const race = async () => {
-    toggleButton();
+    toggleRaceBtn();
     const timeArr = await getTimeOfAllCars(cars);
     addTimeToAnimationElement(timeArr, setAnimElements);
     setIsRacing(true);
@@ -125,6 +128,10 @@ function Garage() {
     setAsyncActionResults((prevState) => [...prevState, result]);
   };
 
+  const reset = () => {
+    setHasBeenReset(true);
+  };
+
   return (
     <div className="Garage">
       Garage
@@ -132,6 +139,7 @@ function Garage() {
       <FormCreate createCar={createCar} />
       <button type="button" onClick={generateCars}>Generate Random Cars</button>
       <button type="button" onClick={race} disabled={isBtnRaceDisabled}>Start Race</button>
+      <button type="button" onClick={reset}>Reset</button>
       <CarTable
         cars={cars}
         updateCar={updateCar}
@@ -140,6 +148,8 @@ function Garage() {
         animElements={animElements}
         setAnimElements={setAnimElements}
         startDriving={startDriving}
+        hasBeenReset={hasBeenReset}
+        setHasBeenReset={setHasBeenReset}
       />
       <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
     </div>

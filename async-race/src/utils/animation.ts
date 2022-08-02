@@ -9,11 +9,13 @@ export const startAnimation = (
   const anim = carRef.current.animate([
     { transform: 'translateX(0%)', easing: 'linear' }, // keyframe
     { transform: 'translateX(80%)', easing: 'linear' }, // keyframe
-  ], { duration: time, fill: 'forwards' });
-  anim.commitStyles();
+  ], { duration: time, fill: 'both' });
+  // anim.commitStyles();
+  // anim.startTime = anim.currentTime;
   anim.onfinish = () => {
     // debugger;
     console.log('onfinish');
+    console.log(anim.playState);
     onFinishActions();
   };
   return anim;

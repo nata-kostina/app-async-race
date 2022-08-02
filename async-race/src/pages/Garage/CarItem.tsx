@@ -25,10 +25,12 @@ interface CarItemProps {
   animElements: AnimationElement[],
   setAnimElements: Dispatch<SetStateAction<AnimationElement[]>>,
   startDriving: (asyncAction: () => Promise<DriveCarResult>) => void,
+  hasBeenReset: boolean,
+  setHasBeenReset: Dispatch<SetStateAction<boolean>>,
 }
 
 function CarItem({
-  car, onEditClicked, onDeleteClicked, isRacing, onStartRace, animElements, setAnimElements, startDriving,
+  car, onEditClicked, onDeleteClicked, isRacing, onStartRace, animElements, setAnimElements, startDriving, hasBeenReset, setHasBeenReset,
 }: CarItemProps) {
   const carRef = useRef() as MutableRefObject<HTMLDivElement>;
   const animRef = useRef(new Animation()) as MutableRefObject<Animation>;
@@ -47,6 +49,7 @@ function CarItem({
   const onStartActions = () => {
     toggleButtons();
     setIsFinished(false);
+    console.log('onStartActions', animRef.current.playState);
   };
   const onSuccessFinishActions = (element: AnimationElement) => {
     setIsFinished(true);
@@ -54,6 +57,7 @@ function CarItem({
   };
   const onFinishAnimationActions = () => {
     setIsFinished(true);
+    console.log(animRef.current.playState);
   };
   const onInterruptActions = (element: AnimationElement) => {
     stopCar(element);
@@ -68,6 +72,12 @@ function CarItem({
     }
   }, [isRacing]);
 
+  useEffect(() => {
+    if (hasBeenReset) {
+      animRef.current.cancel();
+      setHasBeenReset(false);
+    }
+  }, [hasBeenReset]);
   const onStartClicked = async () => {
     const { velocity, distance } = await AppLoader.startEngine(car.id.toString(), EngineStatus.STARTED);
     const time = calculateTime(velocity, distance);
@@ -84,6 +94,8 @@ function CarItem({
     stopCar({ animRef, carRef, carId: car.id });
     setIsFinished(true);
   };
+  debugger;
+  console.log('render playState', animRef.current.playState);
   return (
     <li className="car__item" id={car.id.toString()}>
       {car.id}
