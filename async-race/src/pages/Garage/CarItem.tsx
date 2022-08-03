@@ -94,7 +94,6 @@ function CarItem({
     stopCar({ animRef, carRef, carId: car.id });
     setIsFinished(true);
   };
-  debugger;
   console.log('render playState', animRef.current.playState);
   return (
     <li className="car__item" id={car.id.toString()}>

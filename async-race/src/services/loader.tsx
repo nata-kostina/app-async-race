@@ -31,7 +31,7 @@ export function load <T>(request: FetchRequest): Promise<T> {
     .then((response) => handleResponse(response))
     .then((res): Promise<T> => res.json())
     .then((data) => data)
-    .catch((error: Error) => { throw new Error(error.message); });
+    .catch((error: Error) => { console.log('RESPONSE.OK is FALSE'); throw new Error(error.message); });
 }
 
 export function getHeaders(request: FetchRequest): Promise<Headers> {

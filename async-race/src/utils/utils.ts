@@ -40,3 +40,5 @@ export const addTimeToAnimationElement = (
     return el;
   }));
 });
+
+export const convertMsToSeconds = (ms: number) => Number((ms / 1000).toFixed(2));

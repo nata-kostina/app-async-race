@@ -1,15 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-
 import './App.css';
+// import Header from './components/Header';
 
 function App() {
   return (
     <div className="App">
-      <nav>
-        <Link to="/garage">Garage</Link>
-        <Link to="/winners">Winners</Link>
-      </nav>
+      {/* <Header /> */}
     </div>
   );
 }

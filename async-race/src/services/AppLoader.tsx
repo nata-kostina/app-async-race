@@ -1,7 +1,9 @@
 /* eslint-disable max-len */
-import { limitPerPage } from '../data/constants';
+import { limitPerPage, winnersLimitPerPage } from '../data/constants';
 import {
-  Car, EngineResponse, EngineStatus, UpdateCarParams, EngineDriveModeResponse,
+  Car, EngineResponse, EngineStatus, UpdateCarParams, EngineDriveModeResponse, SortType, OrderType,
+  Winner,
+  UpdateWinnerParams,
 } from '../types/types';
 import { load, getHeaders } from './loader';
 
@@ -13,6 +15,13 @@ const AppLoader = {
   })
     .then((data) => data)
     .catch((error: Error): Car[] => { console.log(error); return []; }),
+
+  getCar: async (id: number): Promise<Car> => load<Car>({
+    url: `garage/${id}`,
+    method: 'GET',
+  })
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
 
   updateCar: async (dataParams: UpdateCarParams, id: string): Promise<Car> => load<Car>({
     url: `garage/${id}`,
@@ -64,6 +73,54 @@ const AppLoader = {
   })
     .then((data) => data)
     .catch((error: string) => { throw new Error(error); }),
+
+  getWinners: async (currentPage: number, sort: SortType, order: OrderType): Promise<Winner[]> => load<Winner[]>({
+    url: 'winners',
+    method: 'GET',
+    queryParams: {
+      _page: currentPage.toString(),
+      _limit: winnersLimitPerPage.toString(),
+      _sort: sort,
+      _order: order,
+    },
+  })
+    .then((data) => data)
+    .catch((error: Error): Winner[] => { console.log(error); return []; }),
+
+  getWinnersTotalCount: async (): Promise<string> => getHeaders({
+    url: 'winners',
+    method: 'GET',
+    queryParams: { _limit: '1' },
+  })
+    .then((headers: Headers) => headers.get('X-Total-Count') as string),
+
+  getWinner: async (id: number): Promise<Winner> => load<Winner>({
+    url: `winners/${id}`,
+    method: 'GET',
+  })
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
+
+  updateWinner: async (dataParams: UpdateWinnerParams, id: string): Promise<Car> => load<Car>({
+    url: `winners/${id}`,
+    method: 'PUT',
+    dataParams,
+  })
+    .then((data) => data),
+
+  deleteWinner: async (id: string): Promise<{}> => load<{}>({
+    url: `winners/${id}`,
+    method: 'DELETE',
+  })
+    .then((data) => data),
+
+  createWinner: async (dataParams: UpdateWinnerParams): Promise<Winner> => load<Winner>({
+    url: 'winners',
+    method: 'POST',
+    dataParams,
+  })
+    .then((data) => data),
+
 };
 
 export default AppLoader;

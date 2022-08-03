@@ -4,16 +4,16 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
-  useState, useEffect, useRef, MutableRefObject, Dispatch, SetStateAction,
+  useState, useEffect, Dispatch, SetStateAction,
 } from 'react';
 import Pagination from '../../components/ui/Pagination/Pagination';
 import {
-  AnimationElement, Car, DriveCarResult, EngineStatus, Result, UpdateCarParams,
+  AnimationElement, Car, DriveCarResult, EngineStatus, IState, Result, UpdateCarParams, Winner,
 } from '../../types/types';
 import CarTable from './CarTable';
 import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
-import { generateRandomCars, calculateTime, addTimeToAnimationElement } from '../../utils/utils';
+import { generateRandomCars, convertMsToSeconds, addTimeToAnimationElement } from '../../utils/utils';
 import { startEngine, getTimeOfAllCars } from './CarActions';
 import { useToggleBtn } from './hooks/CarHooks';
 import useDidMountEffect from '../../hooks/GeneralHooks';
@@ -39,8 +39,10 @@ const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   }, [currentPage, hasBeenUpdated]);
   return [cars, setCars, totalCarsNum];
 };
-
-function Garage() {
+interface GarageProps {
+  state: IState;
+}
+function Garage({ state }: GarageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const onPageChanged = (value: number) => setCurrentPage(value);
 
@@ -86,13 +88,28 @@ function Garage() {
     await Promise.allSettled(promises);
     toggleRaceBtn();
     setIsRacing(false);
+    state.isRacing = false;
     setAsyncActionResults([]);
   };
-  const [winner, setWinner] = useState({} as Car);
-  const showWinner = () => {
+  const [currentWinner, setCurrentWinner] = useState({} as Car);
 
-  };
-  useDidMountEffect(showWinner, [winner]);
+  function getBestTime(prevTime: number, newTime: number) {
+    return newTime < prevTime ? newTime : prevTime;
+  }
+
+  async function handleWinner(winnerCar: Car, time: number) {
+    await AppLoader.getWinner(winnerCar.id)
+      .then((winner) => {
+        const bestTime = getBestTime(winner.time, time);
+        console.log('current time', time);
+        console.log('winner.time', winner.time);
+        AppLoader.updateWinner({ wins: winner.wins + 1, time: bestTime }, winnerCar.id.toString());
+      })
+      .catch((e) => {
+        console.log('OOOPS, winner not found');
+        AppLoader.createWinner({ id: winnerCar.id, wins: 1, time });
+      });
+  }
   const startRace = () => {
     async function raceAll(promises: Promise<DriveCarResult>[], ids: number[]): Promise<number> {
       if (promises.length === 0) {
@@ -108,10 +125,13 @@ function Garage() {
         return raceAll(restPromises, restIds);
       }
       console.log('Success Car ID', carId);
-      const winnerCar = cars.find((car) => car.id === carId);
-      setWinner(winnerCar as Car);
+      const winnerCar = cars.find((car) => car.id === carId) as Car;
+      // setWinner(winnerCar, time);
+      setCurrentWinner(winnerCar);
       setShowModal(true);
       onFinishRacing(promises);
+      const timeSec = convertMsToSeconds(time);
+      handleWinner(winnerCar, timeSec);
       return (winnerCar as Car).id as number;
     }
 
@@ -128,6 +148,7 @@ function Garage() {
     const timeArr = await getTimeOfAllCars(cars);
     addTimeToAnimationElement(timeArr, setAnimElements);
     setIsRacing(true);
+    state.isRacing = true;
   };
 
   const startDriving = (asyncAction: () => Promise<DriveCarResult>): void => {
@@ -140,6 +161,7 @@ function Garage() {
   const onModalClosed = () => {
     setShowModal(false);
   };
+
   return (
     <div className="Garage">
       Garage
@@ -168,7 +190,7 @@ function Garage() {
         <div>
           Winner is
           {' '}
-          {winner.id}
+          {currentWinner.id}
         </div>
       </Modal>
     </div>

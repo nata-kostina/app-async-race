@@ -7,7 +7,7 @@ export interface FetchRequest {
     [key: string]: string;
   }
   dataParams?: {
-    [key: string]: string;
+    [key: string]: string | number;
   }
 }
 
@@ -71,11 +71,38 @@ export interface DriveCarResult {
   time: number;
 }
 
-function pow(x: number, n: number): number {
-  if (n === 1) {
-    return x;
-  }
-  return x * pow(x, n - 1);
+export interface WinnerForStats {
+  carId: number;
+  name: string;
+  time: number;
+  image: () => JSX.Element;
+  winsNum: number;
 }
 
-pow(2, 3);
+export interface IState {
+  winners: WinnerForStats[],
+  isRacing: boolean,
+}
+
+export interface Winner {
+  id: number,
+  wins: number,
+  time: number,
+}
+
+export enum SortType {
+  ID = 'id',
+  WINS = 'wins',
+  TIME = 'time,',
+}
+
+export enum OrderType {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
+export type UpdateWinnerParams = {
+  wins: number,
+  time: number,
+  id?: number,
+};
