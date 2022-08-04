@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Dispatch, SetStateAction } from 'react';
 import { carBrand, carModal, randomCarsNum } from '../data/constants';
 import { AnimationElement, CarValues } from '../types/types';
@@ -42,3 +43,5 @@ export const addTimeToAnimationElement = (
 });
 
 export const convertMsToSeconds = (ms: number) => Number((ms / 1000).toFixed(2));
+
+export const getPagesNum = (totalItemsNum: number, limiPerPage: number) => Math.ceil(totalItemsNum / limiPerPage);

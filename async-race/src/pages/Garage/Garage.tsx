@@ -13,23 +13,30 @@ import {
 import CarTable from './CarTable';
 import AppLoader from '../../services/AppLoader';
 import FormCreate from './FormCreate';
-import { generateRandomCars, convertMsToSeconds, addTimeToAnimationElement } from '../../utils/utils';
+import {
+  generateRandomCars, convertMsToSeconds, addTimeToAnimationElement, getPagesNum,
+} from '../../utils/utils';
 import { startEngine, getTimeOfAllCars } from './CarActions';
 import { useToggleBtn } from './hooks/CarHooks';
 import useDidMountEffect from '../../hooks/GeneralHooks';
 import Modal from '../../components/ui/Modal/Modal';
+import useModal from '../../components/ui/Modal/useModal';
+import { carsLimitPerPage } from '../../data/constants';
 
 const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
-  const [totalCarsNum, setTotalCarsNum] = useState('0');
+  const [totalCarsNum, setTotalCarsNum] = useState() as [number, Dispatch<SetStateAction<number>>];
+  const [totalPagesNum, setTotalPagesNum] = useState() as [number, Dispatch<SetStateAction<number>>];
   useEffect(() => {
     let isActual = true;
     const fetchData = async () => {
       const data: Car[] = await AppLoader.getCars(currentPage);
       if (isActual) {
-        const num = await AppLoader.getTotalCount();
-        setTotalCarsNum(num);
+        const num = await AppLoader.getTotalCarsNum();
+        setTotalCarsNum(Number(num));
         setCars(data);
+        const pages = getPagesNum(Number(num), carsLimitPerPage);
+        setTotalPagesNum(pages);
       } else console.log('This fetch is not actual');
     };
     fetchData();
@@ -37,22 +44,30 @@ const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
       isActual = false;
     };
   }, [currentPage, hasBeenUpdated]);
-  return [cars, setCars, totalCarsNum];
+  return [cars, setCars, totalCarsNum, totalPagesNum];
 };
 interface GarageProps {
   state: IState;
 }
 function Garage({ state }: GarageProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const onPageChanged = (value: number) => setCurrentPage(value);
+  const [currentPage, setCurrentPage] = useState(state.currentGaragePage);
+
+  const onPageChanged = (value: number) => {
+    setCurrentPage(value);
+    state.currentGaragePage = value;
+  };
+  const [modalHeader, setModalHeader] = useState('');
+  const [modalContent, setModalContent] = useState() as [JSX.Element, Dispatch<SetStateAction<JSX.Element>>];
 
   const [showModal, setShowModal] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
   const [hasBeenReset, setHasBeenReset] = useState(false);
   const [isRacing, setIsRacing] = useState(false);
   const [isBtnRaceDisabled, toggleRaceBtn] = useToggleBtn() as [boolean, () => void];
+  const [isPaginationDisabled, togglePaginationBtns] = useToggleBtn() as [boolean, () => void];
   // eslint-disable-next-line max-len
-  const [cars, setCars, totalCarsNum] = useCars(currentPage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string];
+  const [cars, setCars, totalCarsNum, totalPagesNum] = useCars(currentPage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string, number];
   const updateCar = async (values: UpdateCarParams, car: Car) => {
     try {
       await AppLoader.updateCar(values, car.id.toString());
@@ -65,6 +80,7 @@ function Garage({ state }: GarageProps) {
   const deleteCar = async (id: string) => {
     try {
       await AppLoader.deleteCar(id);
+      await AppLoader.deleteWinner(id);
       setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
       console.log('Ooops! Deleting was failed');
@@ -72,9 +88,21 @@ function Garage({ state }: GarageProps) {
   };
 
   const createCar = async (values: UpdateCarParams) => {
+    if (values.name.length === 0) {
+      setModalHeader('Winner');
+      const element = (
+        <div>
+          Car Name can`t be empty.
+        </div>
+      );
+      setModalContent(element);
+      setShowModal(true);
+      return;
+    }
     try {
       const data: Car = await AppLoader.createCar(values);
       setCars([...cars, data]);
+      setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
       console.log('Ooops! Creating was failed');
     }
@@ -84,9 +112,9 @@ function Garage({ state }: GarageProps) {
   const [animElements, setAnimElements] = useState([] as AnimationElement[]);
   const [asyncActionResults, setAsyncActionResults] = useState([] as Promise<DriveCarResult>[]);
   const onFinishRacing = async (promises: Promise<DriveCarResult>[]) => {
-    console.log('onFinishRacing');
     await Promise.allSettled(promises);
     toggleRaceBtn();
+    togglePaginationBtns();
     setIsRacing(false);
     state.isRacing = false;
     setAsyncActionResults([]);
@@ -101,12 +129,9 @@ function Garage({ state }: GarageProps) {
     await AppLoader.getWinner(winnerCar.id)
       .then((winner) => {
         const bestTime = getBestTime(winner.time, time);
-        console.log('current time', time);
-        console.log('winner.time', winner.time);
         AppLoader.updateWinner({ wins: winner.wins + 1, time: bestTime }, winnerCar.id.toString());
       })
       .catch((e) => {
-        console.log('OOOPS, winner not found');
         AppLoader.createWinner({ id: winnerCar.id, wins: 1, time });
       });
   }
@@ -118,16 +143,22 @@ function Garage({ state }: GarageProps) {
       }
       const { carId, result, time } = await Promise.race(promises);
       if (result === Result.FAIL) {
-        console.log('Failed Car ID', carId);
         const failedIndex = ids.findIndex((i) => i === carId);
         const restPromises = [...promises.slice(0, failedIndex), ...promises.slice(failedIndex + 1, promises.length)];
         const restIds = [...ids.slice(0, failedIndex), ...ids.slice(failedIndex + 1, ids.length)];
         return raceAll(restPromises, restIds);
       }
-      console.log('Success Car ID', carId);
       const winnerCar = cars.find((car) => car.id === carId) as Car;
-      // setWinner(winnerCar, time);
       setCurrentWinner(winnerCar);
+      setModalHeader('Winner');
+      const element = (
+        <div>
+          Winner is
+          {' '}
+          {winnerCar.id}
+        </div>
+      );
+      setModalContent(element);
       setShowModal(true);
       onFinishRacing(promises);
       const timeSec = convertMsToSeconds(time);
@@ -136,7 +167,6 @@ function Garage({ state }: GarageProps) {
     }
 
     if (asyncActionResults.length === cars.length) {
-      console.log('condition');
       const ids = cars.map((c) => c.id);
       raceAll(asyncActionResults, ids);
     }
@@ -145,6 +175,7 @@ function Garage({ state }: GarageProps) {
 
   const race = async () => {
     toggleRaceBtn();
+    togglePaginationBtns();
     const timeArr = await getTimeOfAllCars(cars);
     addTimeToAnimationElement(timeArr, setAnimElements);
     setIsRacing(true);
@@ -158,14 +189,20 @@ function Garage({ state }: GarageProps) {
   const reset = () => {
     setHasBeenReset(true);
   };
-  const onModalClosed = () => {
-    setShowModal(false);
-  };
 
   return (
     <div className="Garage">
       Garage
-      <span>{totalCarsNum}</span>
+      <span>
+        Total Cars Number
+        {' '}
+        {totalCarsNum}
+      </span>
+      <span>
+        Page
+        {' '}
+        {state.currentGaragePage}
+      </span>
       <FormCreate createCar={createCar} />
       <button type="button" onClick={generateCars}>Generate Random Cars</button>
       <button type="button" onClick={race} disabled={isBtnRaceDisabled}>Start Race</button>
@@ -181,17 +218,13 @@ function Garage({ state }: GarageProps) {
         hasBeenReset={hasBeenReset}
         setHasBeenReset={setHasBeenReset}
       />
-      <Pagination total={15} currentPage={currentPage} onPageChanged={onPageChanged} />
+      <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={isPaginationDisabled} />
       <Modal
         isShown={showModal}
-        headerText="Winner"
-        onCloseClicked={onModalClosed}
+        headerText={modalHeader}
+        onCloseClicked={() => setShowModal(false)}
       >
-        <div>
-          Winner is
-          {' '}
-          {currentWinner.id}
-        </div>
+        {modalContent}
       </Modal>
     </div>
   );

@@ -82,6 +82,8 @@ export interface WinnerForStats {
 export interface IState {
   winners: WinnerForStats[],
   isRacing: boolean,
+  currentGaragePage: number,
+  currentWinnersPage: number,
 }
 
 export interface Winner {

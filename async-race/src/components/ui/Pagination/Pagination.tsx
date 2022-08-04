@@ -4,10 +4,13 @@ import PaginationItem from './PaginationItem';
 interface PaginationProps {
   total: number,
   currentPage: number,
-  onPageChanged: (value: number) => void
+  onPageChanged: (value: number) => void,
+  isDisabled: boolean,
 }
 
-function Pagination({ total, currentPage, onPageChanged }: PaginationProps) {
+function Pagination({
+  total, currentPage, onPageChanged, isDisabled,
+}: PaginationProps) {
   const pages = [];
 
   const onPrevPage = () => {
@@ -26,6 +29,7 @@ function Pagination({ total, currentPage, onPageChanged }: PaginationProps) {
       isActive={i === currentPage}
       onPageChanged={onPageChanged}
       key={i}
+      isDisabled={isDisabled}
     />);
   }
 
@@ -35,13 +39,15 @@ function Pagination({ total, currentPage, onPageChanged }: PaginationProps) {
       <button
         type="button"
         onClick={() => onPrevPage()}
+        disabled={isDisabled}
       >
         Prev
       </button>
-      {pages}
+      {pages }
       <button
         type="button"
         onClick={() => onNextPage()}
+        disabled={isDisabled}
       >
         Next
 

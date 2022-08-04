@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { limitPerPage, winnersLimitPerPage } from '../data/constants';
+import { carsLimitPerPage, winnersLimitPerPage } from '../data/constants';
 import {
   Car, EngineResponse, EngineStatus, UpdateCarParams, EngineDriveModeResponse, SortType, OrderType,
   Winner,
@@ -11,7 +11,7 @@ const AppLoader = {
   getCars: async (currentPage: number): Promise<Car[]> => load<Car[]>({
     url: 'garage',
     method: 'GET',
-    queryParams: { _page: currentPage.toString(), _limit: limitPerPage.toString() },
+    queryParams: { _page: currentPage.toString(), _limit: carsLimitPerPage.toString() },
   })
     .then((data) => data)
     .catch((error: Error): Car[] => { console.log(error); return []; }),
@@ -43,7 +43,7 @@ const AppLoader = {
   })
     .then((data) => data),
 
-  getTotalCount: async (): Promise<string> => getHeaders({
+  getTotalCarsNum: async (): Promise<string> => getHeaders({
     url: 'garage',
     method: 'GET',
     queryParams: { _limit: '1' },
@@ -120,6 +120,12 @@ const AppLoader = {
     dataParams,
   })
     .then((data) => data),
+  getTotalWinnersNum: async (): Promise<string> => getHeaders({
+    url: 'winners',
+    method: 'GET',
+    queryParams: { _limit: '1' },
+  })
+    .then((headers: Headers) => headers.get('X-Total-Count') as string),
 
 };
 

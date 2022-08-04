@@ -1,6 +1,6 @@
 export const baseUrl = 'http://127.0.0.1:3000';
 
-export const limitPerPage = 7;
+export const carsLimitPerPage = 7;
 export const winnersLimitPerPage = 10;
 
 export const randomCarsNum = 100;

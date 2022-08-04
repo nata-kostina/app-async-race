@@ -49,7 +49,6 @@ function CarItem({
   const onStartActions = () => {
     toggleButtons();
     setIsFinished(false);
-    console.log('onStartActions', animRef.current.playState);
   };
   const onSuccessFinishActions = (element: AnimationElement) => {
     setIsFinished(true);
@@ -57,7 +56,6 @@ function CarItem({
   };
   const onFinishAnimationActions = () => {
     setIsFinished(true);
-    console.log(animRef.current.playState);
   };
   const onInterruptActions = (element: AnimationElement) => {
     stopCar(element);
@@ -94,7 +92,7 @@ function CarItem({
     stopCar({ animRef, carRef, carId: car.id });
     setIsFinished(true);
   };
-  console.log('render playState', animRef.current.playState);
+
   return (
     <li className="car__item" id={car.id.toString()}>
       {car.id}
