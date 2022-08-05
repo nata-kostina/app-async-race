@@ -23,3 +23,9 @@ export const carModal = [
   'IS 200t', 'LS 500h', 'RX', 'ES 200/250/350', 'Hatchback', 'CX-5', 'Sedan', 'CX-30', 'CX-9', 'CX-3', 'MX-5 Roadster', 'Phantom', 'Camry', 'Polo',
   'Cullinan', 'Ghost', 'Dawn', 'Duster', 'Arkana', 'Sandero', 'Logan', 'Trafic Fourgon', 'Logan MCV', 'Captur', 'Kadjar', 'RAV4', 'Rio', 'Creta', 'Solaris',
 ];
+
+export const colorStart = '#66E59A';
+export const colorStop = '#E17474';
+export const colorDisabled = '#0091ea';
+export const colorPrimary = '#89C1E1';
+export const colorBlue = '#78A9C5';

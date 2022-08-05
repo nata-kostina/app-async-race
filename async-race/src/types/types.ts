@@ -108,3 +108,28 @@ export type UpdateWinnerParams = {
   time: number,
   id?: number,
 };
+
+export interface FlexProps {
+  align?: string;
+  justify?: string;
+  direction?: string;
+  margin?: string;
+  padding?: string;
+  children: React.ReactNode;
+}
+export interface StyledProps {
+  children: React.ReactNode;
+}
+
+export interface NavigationProps {
+  theme: string;
+}
+
+export interface ThemeProps {
+  theme: string;
+}
+
+export interface ButtonProps {
+  disabled?: boolean;
+  color?: string;
+}

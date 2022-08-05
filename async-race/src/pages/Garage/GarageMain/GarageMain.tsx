@@ -6,22 +6,24 @@
 import React, {
   useState, useEffect, Dispatch, SetStateAction,
 } from 'react';
-import Pagination from '../../components/ui/Pagination/Pagination';
+import Pagination from '../../../components/ui/Pagination/Pagination';
 import {
   AnimationElement, Car, DriveCarResult, EngineStatus, IState, Result, UpdateCarParams, Winner,
-} from '../../types/types';
-import CarTable from './CarTable';
-import AppLoader from '../../services/AppLoader';
-import FormCreate from './FormCreate';
+} from '../../../types/types';
+import AppLoader from '../../../services/AppLoader';
+import FormCreate from '../FormCreate/FormCreate';
 import {
   generateRandomCars, convertMsToSeconds, addTimeToAnimationElement, getPagesNum,
-} from '../../utils/utils';
-import { startEngine, getTimeOfAllCars } from './CarActions';
-import { useToggleBtn } from './hooks/CarHooks';
-import useDidMountEffect from '../../hooks/GeneralHooks';
-import Modal from '../../components/ui/Modal/Modal';
-import useModal from '../../components/ui/Modal/useModal';
-import { carsLimitPerPage } from '../../data/constants';
+} from '../../../utils/utils';
+import { startEngine, getTimeOfAllCars } from '../CarActions';
+import { useToggleBtn } from '../hooks/CarHooks';
+import useDidMountEffect from '../../../hooks/GeneralHooks';
+import Modal from '../../../components/ui/Modal/Modal';
+import useModal from '../../../components/ui/Modal/useModal';
+import { carsLimitPerPage } from '../../../data/constants';
+import Flex from '../../../components/Flex';
+import CarList from '../CarList/CarList';
+import { Container, StyledBtn, StyledMain } from './styles';
 
 const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [cars, setCars] = useState<Car[]>([]);
@@ -49,7 +51,7 @@ const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
 interface GarageProps {
   state: IState;
 }
-function Garage({ state }: GarageProps) {
+function GarageMain({ state }: GarageProps) {
   const [currentPage, setCurrentPage] = useState(state.currentGaragePage);
 
   const onPageChanged = (value: number) => {
@@ -174,6 +176,7 @@ function Garage({ state }: GarageProps) {
   useDidMountEffect(startRace, [asyncActionResults]);
 
   const race = async () => {
+    if (cars.length === 0) return;
     toggleRaceBtn();
     togglePaginationBtns();
     const timeArr = await getTimeOfAllCars(cars);
@@ -191,23 +194,60 @@ function Garage({ state }: GarageProps) {
   };
 
   return (
-    <div className="Garage">
-      Garage
-      <span>
-        Total Cars Number
-        {' '}
-        {totalCarsNum}
-      </span>
-      <span>
-        Page
-        {' '}
-        {state.currentGaragePage}
-      </span>
-      <FormCreate createCar={createCar} />
-      <button type="button" onClick={generateCars}>Generate Random Cars</button>
-      <button type="button" onClick={race} disabled={isBtnRaceDisabled}>Start Race</button>
-      <button type="button" onClick={reset}>Reset</button>
-      <CarTable
+    <StyledMain>
+      <Container>
+        <Flex direction="row" align="center" justify="space-between">
+
+          <Flex direction="column" align="start" justify="start">
+            <span>
+              Garage
+            </span>
+            <span>
+              Total Cars Number
+              {' '}
+              {totalCarsNum}
+            </span>
+            <span>
+              Page
+              {' '}
+              {state.currentGaragePage}
+            </span>
+            <Flex direction="column" align="start" justify="start">
+              <FormCreate createCar={createCar} />
+            </Flex>
+          </Flex>
+          <Flex direction="column" align="end" justify="start">
+            <StyledBtn
+              type="button"
+              onClick={generateCars}
+            >
+              <span>Generate Random Cars</span>
+            </StyledBtn>
+            <StyledBtn
+              type="button"
+              onClick={race}
+              disabled={isBtnRaceDisabled}
+            >
+              <span>Start Race</span>
+            </StyledBtn>
+            <StyledBtn
+              type="button"
+              onClick={reset}
+            >
+              <span>Reset</span>
+            </StyledBtn>
+            <StyledBtn
+              type="button"
+              onClick={reset}
+            >
+              <span>Create A Car</span>
+            </StyledBtn>
+          </Flex>
+        </Flex>
+
+        <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={isPaginationDisabled} />
+      </Container>
+      <CarList
         cars={cars}
         updateCar={updateCar}
         deleteCar={deleteCar}
@@ -218,7 +258,6 @@ function Garage({ state }: GarageProps) {
         hasBeenReset={hasBeenReset}
         setHasBeenReset={setHasBeenReset}
       />
-      <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={isPaginationDisabled} />
       <Modal
         isShown={showModal}
         headerText={modalHeader}
@@ -226,8 +265,8 @@ function Garage({ state }: GarageProps) {
       >
         {modalContent}
       </Modal>
-    </div>
+    </StyledMain>
   );
 }
 
-export default Garage;
+export default GarageMain;

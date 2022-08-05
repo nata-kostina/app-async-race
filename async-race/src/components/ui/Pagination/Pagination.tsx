@@ -1,5 +1,7 @@
 import React from 'react';
+import Flex from '../../Flex';
 import PaginationItem from './PaginationItem';
+import { StyledButton } from './styles';
 
 interface PaginationProps {
   total: number,
@@ -19,7 +21,7 @@ function Pagination({
     }
   };
   const onNextPage = () => {
-    if (currentPage !== total) {
+    if (currentPage <= total - 1) {
       onPageChanged(currentPage + 1);
     }
   };
@@ -34,25 +36,23 @@ function Pagination({
   }
 
   return (
-    <div className="pagination">
-      Pagination
-      <button
+    <Flex direction="row" justify="start" padding="10px 0">
+      <StyledButton
         type="button"
         onClick={() => onPrevPage()}
         disabled={isDisabled}
       >
-        Prev
-      </button>
+        &lt;
+      </StyledButton>
       {pages }
-      <button
+      <StyledButton
         type="button"
         onClick={() => onNextPage()}
         disabled={isDisabled}
       >
-        Next
-
-      </button>
-    </div>
+        &gt;
+      </StyledButton>
+    </Flex>
   );
 }
 

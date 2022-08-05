@@ -4,25 +4,28 @@
 import React, {
   useState, useEffect, SetStateAction, Dispatch,
 } from 'react';
-import Header from '../../components/Header';
-import Pagination from '../../components/ui/Pagination/Pagination';
-import { StateContext } from '../../state/State';
+import Header from '../../../components/Header/Header';
+import Pagination from '../../../components/ui/Pagination/Pagination';
+import { StateContext } from '../../../state/State';
 import {
   Car,
   IState,
   OrderType, SortType, Winner,
   WinnerForStats,
-} from '../../types/types';
-import WinnersList from './WinnersTable';
-import AppLoader from '../../services/AppLoader';
-import CarIcon from '../Garage/CarIcon';
-import { getPagesNum } from '../../utils/utils';
-import { winnersLimitPerPage } from '../../data/constants';
+} from '../../../types/types';
+import WinnersList from '../WinnersTable/WinnersTable';
+import AppLoader from '../../../services/AppLoader';
+import CarIcon from '../../Garage/CarIcon/CarIcon';
+import { getPagesNum } from '../../../utils/utils';
+import { winnersLimitPerPage } from '../../../data/constants';
+import StyledMain from './styles';
+import Flex from '../../../components/Flex';
+import CarSVG from '../../../components/CarSVG';
 
 interface GarageProps {
   state: IState;
 }
-function Winners({ state }: GarageProps) {
+function WinnersMain({ state }: GarageProps) {
   const [currentPage, setCurrentPage] = useState(state.currentWinnersPage);
   const [totalPagesNum, setTotalPagesNum] = useState() as [number, Dispatch<SetStateAction<number>>];
 
@@ -43,7 +46,7 @@ function Winners({ state }: GarageProps) {
         carId: winner.id,
         name: car.name,
         time: winner.time,
-        image: () => CarIcon({ color: car.color }),
+        image: () => CarSVG({ colorProp: car.color }),
         winsNum: winner.wins,
       } as WinnerForStats;
     });
@@ -67,30 +70,27 @@ function Winners({ state }: GarageProps) {
     setWinners(winnersForStats);
   };
   return (
-    <div>
+    <StyledMain>
       Winners
-      <span>
-        Page
-        {' '}
-        {currentPage}
-      </span>
-      <span>
-        Total Winners Number
-        {' '}
-        {winners.length}
-      </span>
-      <StateContext.Consumer>
-        {(state2) => (
-          <Header state={state2} />
-        )}
-      </StateContext.Consumer>
+      <Flex direction="column">
+        <span>
+          Page
+          {' '}
+          {currentPage}
+        </span>
+        <span>
+          Total Winners Number
+          {' '}
+          {winners.length}
+        </span>
+      </Flex>
       <div>
         <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={false} />
         <WinnersList winners={winners} sortWinners={sortWinners} />
       </div>
 
-    </div>
+    </StyledMain>
   );
 }
 
-export default Winners;
+export default WinnersMain;

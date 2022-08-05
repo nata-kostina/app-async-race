@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { CSSTransition, Transition } from 'react-transition-group';
-import CarSVG from '../../components/CarSVG';
+import styled from 'styled-components';
+import CarSVG from '../../../components/CarSVG';
+import { Container } from './styles';
 
 interface CarIconProps {
   color: string;
@@ -11,11 +13,10 @@ function CarIcon({
   color,
 }: CarIconProps) {
   return (
-    <div>
-      <div className="img-container">
-        <CarSVG colorProp={color} />
-      </div>
-    </div>
+    <Container>
+      <CarSVG colorProp={color} />
+    </Container>
+
   );
 }
 

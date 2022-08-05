@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { IState } from '../types/types';
-import Modal from './ui/Modal/Modal';
+import { IState } from '../../types/types';
+import Flex from '../Flex';
+import Logo from '../Logo/Logo';
+import Navigation from '../Navigation/Navigation';
+import Modal from '../ui/Modal/Modal';
 
 interface HeaderProps {
   state: IState;
@@ -20,11 +23,11 @@ function Header({ state }: HeaderProps) {
     }
   };
   return (
-    <div className="Header">
-      <nav>
-        <Link to="/garage">Garage</Link>
-        <Link to="/winners" onClick={(e) => onWinnersLinkClicked(e)}>Winners</Link>
-      </nav>
+    <header>
+      <Flex direction="row" align="start" justify="space-between">
+        <Logo theme="normal" />
+        <Navigation theme="normal" />
+      </Flex>
       <Modal
         isShown={showModal}
         headerText="Info"
@@ -34,7 +37,7 @@ function Header({ state }: HeaderProps) {
           Please wait until the race finishes
         </div>
       </Modal>
-    </div>
+    </header>
   );
 }
 

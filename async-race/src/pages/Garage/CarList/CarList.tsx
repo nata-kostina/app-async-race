@@ -1,12 +1,13 @@
 /* eslint-disable max-len */
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import Modal from '../../components/ui/Modal/Modal';
+import Modal from '../../../components/ui/Modal/Modal';
 import {
   AnimationElement, Car, DriveCarResult, UpdateCarParams,
-} from '../../types/types';
-import useModal from '../../components/ui/Modal/useModal';
-import FormEdit from './FormEdit';
-import CarItem from './CarItem';
+} from '../../../types/types';
+import useModal from '../../../components/ui/Modal/useModal';
+import FormEdit from '../FormEdit/FormEdit';
+import CarItem from '../CarItem/CarItem';
+import StyledList from './styles';
 
 interface CarTableProps {
   cars: Car[],
@@ -19,7 +20,7 @@ interface CarTableProps {
   hasBeenReset: boolean,
   setHasBeenReset: Dispatch<SetStateAction<boolean>>,
 }
-function CarTable({
+function CarList({
   cars, updateCar, deleteCar, isRacing, animElements, setAnimElements, startDriving, hasBeenReset, setHasBeenReset,
 }: CarTableProps) {
   const [isShown, openModal, closeModal] = useModal();
@@ -37,23 +38,25 @@ function CarTable({
     console.log(anim);
   };
   return (
-    <div id="carTable">
-      {!cars || cars.length === 0 ? 'There are no cars'
-        : cars.map((car) => (
-          <CarItem
-            car={car}
-            onEditClicked={onEditClicked}
-            onDeleteClicked={onDeleteClicked}
-            key={car.id}
-            isRacing={isRacing}
-            onStartRace={onStartRace}
-            animElements={animElements}
-            setAnimElements={setAnimElements}
-            startDriving={startDriving}
-            hasBeenReset={hasBeenReset}
-            setHasBeenReset={setHasBeenReset}
-          />
-        ))}
+    <>
+      <StyledList>
+        {!cars || cars.length === 0 ? 'There are no cars'
+          : cars.map((car) => (
+            <CarItem
+              car={car}
+              onEditClicked={onEditClicked}
+              onDeleteClicked={onDeleteClicked}
+              key={car.id}
+              isRacing={isRacing}
+              onStartRace={onStartRace}
+              animElements={animElements}
+              setAnimElements={setAnimElements}
+              startDriving={startDriving}
+              hasBeenReset={hasBeenReset}
+              setHasBeenReset={setHasBeenReset}
+            />
+          ))}
+      </StyledList>
 
       <Modal
         isShown={isShown}
@@ -62,10 +65,10 @@ function CarTable({
       >
         <FormEdit onCarUpdated={onCarUpdated} carToEdit={carToEdit} />
       </Modal>
-    </div>
+    </>
   );
 }
-export default CarTable;
+export default CarList;
 
 // cars.map((car) => (
 //   <CarItem

@@ -1,22 +1,27 @@
-import React from 'react';
+/* eslint-disable max-len */
+import React, { ChangeEvent } from 'react';
 import { FormInputProps } from '../../../types/types';
+import Flex from '../../Flex';
+import { StyledInput, StyledLabel } from './styles';
 
 function FormInput({
   id, label, type, val, placeholder = '', onChanged,
 }: FormInputProps) {
   return (
-    <div className="formInput">
-      <label htmlFor={id}>
-        {label}
-        <input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          value={val}
-          onChange={(event) => onChanged(event.target.value)}
-        />
-      </label>
-    </div>
+    <Flex direction="row" align="start" justify="start">
+      <StyledLabel htmlFor={id}>
+        <Flex direction="row" align="center" justify="space-between">
+          {label}
+          <StyledInput
+            id={id}
+            type={type}
+            placeholder={placeholder}
+            value={val}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => onChanged((event.target as HTMLInputElement).value as string)}
+          />
+        </Flex>
+      </StyledLabel>
+    </Flex>
   );
 }
 export default FormInput;

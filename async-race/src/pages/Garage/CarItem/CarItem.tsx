@@ -7,14 +7,19 @@ import React, {
 } from 'react';
 import {
   AnimationElement, Car, DriveCarResult, EngineStatus,
-} from '../../types/types';
-import CarIcon from './CarIcon';
-import AppLoader from '../../services/AppLoader';
-import { calculateTime } from '../../utils/utils';
-import { useOnFinishAnimation, useToggleButtons } from './hooks/CarHooks';
+} from '../../../types/types';
+import CarIcon from '../CarIcon/CarIcon';
+import AppLoader from '../../../services/AppLoader';
+import { calculateTime } from '../../../utils/utils';
+import { useOnFinishAnimation, useToggleButtons } from '../hooks/CarHooks';
 import {
   driveCar, findAnimationElement, startCarAnimation, stopCar,
-} from './CarActions';
+} from '../CarActions';
+import {
+  FlagFinish, StyledBtn, StyledLi, StyledName, StyledStreet,
+} from './styles';
+import Flex from '../../../components/Flex';
+import { colorStart, colorStop } from '../../../data/constants';
 
 interface CarItemProps {
   car: Car;
@@ -94,33 +99,64 @@ function CarItem({
   };
 
   return (
-    <li className="car__item" id={car.id.toString()}>
-      {car.id}
-      {' '}
-      {car.name}
-      {' '}
-      {car.color}
-      <div ref={carRef} className="moving-container">
-        <CarIcon color={car.color} />
-      </div>
-      <button type="button" onClick={() => onEditClicked(car)}>Edit</button>
-      <button type="button" onClick={() => onDeleteClicked(car.id)}>Delete</button>
-      <button
-        type="button"
-        onClick={() => onStartClicked()}
-        disabled={isBtnStartDisabled}
+    <StyledLi className="car__item" id={car.id.toString()}>
+      <Flex
+        direction="row"
+        align="center"
+        justify="space-between"
+        padding="0 15px"
       >
-        Start
-
-      </button>
-      <button
-        type="button"
-        onClick={() => onStopClicked()}
-        disabled={isBtnStopDisabled}
+        <StyledName>
+          {car.name}
+        </StyledName>
+        <Flex direction="row" align="center" justify="end">
+          <StyledBtn
+            type="button"
+            onClick={() => onEditClicked(car)}
+            color="transparent"
+            disabled={false}
+          >
+            Edit
+          </StyledBtn>
+          <StyledBtn
+            type="button"
+            onClick={() => onDeleteClicked(car.id)}
+            color="transparent"
+          >
+            Delete
+          </StyledBtn>
+        </Flex>
+      </Flex>
+      <StyledStreet>
+        <div ref={carRef} className="moving-container">
+          <CarIcon color={car.color} />
+        </div>
+        <FlagFinish />
+      </StyledStreet>
+      <Flex
+        direction="row"
+        justify="start"
+        margin="15px 0 0 0"
+        padding="0 15px"
       >
-        Stop
-      </button>
-    </li>
+        <StyledBtn
+          type="button"
+          onClick={() => onStartClicked()}
+          disabled={isBtnStartDisabled}
+          color={colorStart}
+        >
+          Start
+        </StyledBtn>
+        <StyledBtn
+          type="button"
+          onClick={() => onStopClicked()}
+          disabled={isBtnStopDisabled}
+          color={colorStop}
+        >
+          Stop
+        </StyledBtn>
+      </Flex>
+    </StyledLi>
   );
 }
 

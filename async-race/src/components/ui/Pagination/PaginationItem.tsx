@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyledButton } from './styles';
 
 interface PaginationItemProps {
   value: number,
@@ -10,14 +11,14 @@ function PaginationItem({
   value, isActive, onPageChanged, isDisabled,
 }: PaginationItemProps) {
   return (
-    <button
+    <StyledButton
       type="button"
-      className={`pagination__item ${isActive ? 'active' : ''}`}
       onClick={() => onPageChanged(value)}
       disabled={isDisabled}
+      isActive={isActive}
     >
       {value}
-    </button>
+    </StyledButton>
   );
 }
 
