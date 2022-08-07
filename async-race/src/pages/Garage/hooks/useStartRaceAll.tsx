@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react';
+import addToLogs from '../../../logs/log';
 import { StateContext } from '../../../state/State';
 import { ActionTypes } from '../../../state/types';
 import { Car } from '../../../types/types';
@@ -22,8 +23,8 @@ const useRaceAll = (
           }));
           dispatch({ type: ActionTypes.SET_IS_RACING, payload: true });
         }
-      } catch (e) {
-        // console.log(e);
+      } catch {
+        addToLogs('Failed to get time of all cars');
       }
     };
     if (isRaceStarted) {

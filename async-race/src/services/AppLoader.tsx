@@ -27,20 +27,23 @@ const AppLoader = {
     method: 'PUT',
     dataParams,
   })
-    .then((data) => data),
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
 
   deleteCar: async (id: string): Promise<{}> => load<{}>({
     url: `garage/${id}`,
     method: 'DELETE',
   })
-    .then((data) => data),
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
 
   createCar: async (dataParams: UpdateCarParams): Promise<Car> => load<Car>({
     url: 'garage',
     method: 'POST',
     dataParams,
   })
-    .then((data) => data),
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
 
   getTotalCarsNum: async (): Promise<string> => getHeaders({
     url: 'garage',

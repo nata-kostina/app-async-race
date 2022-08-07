@@ -25,6 +25,7 @@ import { ActionTypes } from '../../../state/types';
 import { useToggleBtn } from '../../../hooks/GeneralHooks';
 import Portal from '../../../components/ui/Modal/Portal';
 import FormEdit from '../FormEdit/FormEdit';
+import addToLogs from '../../../logs/log';
 
 function GarageMain() {
   const { state, dispatch } = useContext(StateContext);
@@ -47,15 +48,15 @@ function GarageMain() {
     try {
       await AppLoader.updateCar(values, car.id.toString());
       setHasBeenUpdated(!hasBeenUpdated);
-    } catch (e) {
-      console.log('Ooops! Updating was failed');
+    } catch {
+      addToLogs(`Failed to update car ${car.id.toString()}`);
     }
   };
   const deleteFromWinners = async (id: string) => {
     try {
       await AppLoader.deleteWinner(id);
-    } catch (e) {
-      console.log('deleteFromWinners Ooops! Deleting was failed');
+    } catch {
+      addToLogs(`Failed to delete a car ${id} from winners`);
     }
   };
   const deleteCar = async (id: string) => {
@@ -63,8 +64,8 @@ function GarageMain() {
       await AppLoader.deleteCar(id);
       setHasBeenUpdated(!hasBeenUpdated);
       deleteFromWinners(id);
-    } catch (e) {
-      // console.log(' deleteCar Ooops! Deleting was failed');
+    } catch {
+      addToLogs(`Failed to delete a car ${id}`);
     }
   };
   const createCar = async (values: UpdateCarParams) => {
@@ -72,8 +73,8 @@ function GarageMain() {
       const data: Car = await AppLoader.createCar(values);
       setCars([...cars, data]);
       setHasBeenUpdated(!hasBeenUpdated);
-    } catch (e) {
-      // console.log('Ooops! Creating was failed');
+    } catch {
+      addToLogs('Failed to create a car');
     }
   };
   const onGenerateClicked = () => generateRandomCars().forEach((car) => createCar(car));

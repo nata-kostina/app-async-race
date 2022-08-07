@@ -13,7 +13,6 @@ const useFetchCars = (currentPage: number, hasBeenUpdated: boolean) => {
   const [totalCarsNum, setTotalCarsNum] = useState() as [number, Dispatch<SetStateAction<number>>];
   const [totalPagesNum, setTotalPagesNum] = useState() as [number, Dispatch<SetStateAction<number>>];
   useEffect(() => {
-    // console.log('use effect');
     let isActual = true;
     const fetchData = async () => {
       const data: Car[] = await AppLoader.getCars(state.currentGaragePage);
@@ -23,7 +22,7 @@ const useFetchCars = (currentPage: number, hasBeenUpdated: boolean) => {
         setCars(data);
         const pages = getPagesNum(Number(num), carsLimitPerPage);
         setTotalPagesNum(pages);
-      } else console.log('This fetch is not actual');
+      }
     };
     fetchData();
     return () => {

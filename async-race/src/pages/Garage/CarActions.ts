@@ -4,6 +4,7 @@ import {
 import { calculateTime } from '../../utils/utils';
 import AppLoader from '../../services/AppLoader';
 import { startAnimation, stopAnimation } from '../../utils/animation';
+import addToLogs from '../../logs/log';
 
 export const startEngine = async (id: string): Promise<{
   id: string;
@@ -18,8 +19,8 @@ export const stopCar = async (element: AnimationElement) => {
   stopAnimation(element.animRef);
   try {
     await AppLoader.stopEngine(element.carId.toString(), EngineStatus.STOPPED);
-  } catch (e) {
-    // console.log(e);
+  } catch {
+    addToLogs(`Failed to stop a car ${element.carId.toString()}`);
   }
 };
 

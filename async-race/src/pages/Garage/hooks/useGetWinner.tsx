@@ -34,11 +34,9 @@ const useGetWinner = (
       const ids = cars.map((c) => c.id);
       const supposedWinner = await getWinner(state.driveCarPromises, ids);
       if (!supposedWinner) {
-        console.log('Ooops! All cars were broken');
         setHasBeenRacedAll(true);
         return;
       }
-      console.log('supposedWinner', supposedWinner);
       dispatch({ type: ActionTypes.SET_WINNER, payload: supposedWinner });
       dispatch({ type: ActionTypes.SET_MODAL, payload: ModalType.SHOW_WINNER });
       dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: true });

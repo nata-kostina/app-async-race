@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react';
+import addToLogs from '../../../logs/log';
 import AppLoader from '../../../services/AppLoader';
 import { StateContext } from '../../../state/State';
 import { ActionTypes } from '../../../state/types';
@@ -22,9 +23,7 @@ const useStopDrive = (
           }
         })
         .catch(() => {
-          if (isActual) {
-            console.log('Is actual');
-          }
+          addToLogs('Failed to stop engine');
         });
     };
     if (hasBeenDriven) {

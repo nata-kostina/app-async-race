@@ -51,12 +51,12 @@ const useStartDrive = (
         .then(() => {
           if (isActual) {
             onSuccessFinishActions(animElement);
-          } else console.log('Is not actual');
+          }
         })
         .catch(() => {
           if (isActual) {
             onInterruptActions(animElement);
-          } else console.log('Is not actual');
+          }
         });
     };
     if (isDriving) {
