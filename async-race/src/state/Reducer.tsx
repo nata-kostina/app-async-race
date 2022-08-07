@@ -1,5 +1,5 @@
 import {
-  AnimationElement, DriveCarResult, ModalType, WinnerCar,
+  AnimationElement, DriveCarResult, ModalType, OrderType, SortType, WinnerCar,
 } from '../types/types';
 import { Action, ActionTypes, IState } from './types';
 
@@ -50,6 +50,10 @@ export function stateReducer(state: IState, action: Action): IState {
       return { ...state, modal: payload as ModalType };
     case ActionTypes.SET_MODAL_VISIBILITY:
       return { ...state, modalVisibility: payload as boolean };
+    case ActionTypes.SET_SORT:
+      return { ...state, sort: payload as SortType };
+    case ActionTypes.SET_ORDER:
+      return { ...state, order: payload as OrderType };
     default:
       return state;
   }

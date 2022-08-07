@@ -8,9 +8,7 @@ import {
 import { winnersLimitPerPage } from '../../../data/constants';
 import AppLoader from '../../../services/AppLoader';
 import { StateContext } from '../../../state/State';
-import {
-  OrderType, SortType, WinnerForStats,
-} from '../../../types/types';
+import { WinnerForStats } from '../../../types/types';
 import { getPagesNum } from '../../../utils/utils';
 import prepareWinnersForDisplay from '../WinnersActions';
 
@@ -21,7 +19,7 @@ const useFetchWinners = (currentPage: number) => {
 
   useEffect(() => {
     async function getWinners() {
-      const winnersResp = await AppLoader.getWinners(state.currentWinnersPage, SortType.ID, OrderType.ASC);
+      const winnersResp = await AppLoader.getWinners(state.currentWinnersPage, state.sort, state.order);
       if (!winnersResp || winnersResp.length === 0) return;
       const winnersForStats = await prepareWinnersForDisplay(winnersResp);
       const num = await AppLoader.getTotalWinnersNum();
@@ -30,7 +28,7 @@ const useFetchWinners = (currentPage: number) => {
       setWinners(winnersForStats);
     }
     getWinners();
-  }, [currentPage]);
+  }, [currentPage, state.sort, state.order]);
 
   return [totalPagesNum, winners, setWinners];
 };

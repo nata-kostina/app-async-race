@@ -1,5 +1,5 @@
 import {
-  AnimationElement, DriveCarResult, ModalType, WinnerCar, WinnerForStats,
+  AnimationElement, DriveCarResult, ModalType, OrderType, SortType, WinnerCar, WinnerForStats,
 } from '../types/types';
 
 export interface IState {
@@ -14,6 +14,8 @@ export interface IState {
   winner: WinnerCar | null,
   modal: ModalType,
   modalVisibility: boolean,
+  sort: SortType,
+  order: OrderType,
 }
 
 export interface IStateContext {
@@ -95,6 +97,16 @@ export type SetModalVisibility = {
   payload: boolean;
 };
 
+export type SetSort = {
+  type: ActionTypes.SET_SORT,
+  payload: SortType;
+};
+
+export type SetOrder = {
+  type: ActionTypes.SET_ORDER,
+  payload: OrderType;
+};
+
 export type Action = SetRacing |
 SetGaragePage |
 SetWinnersPage |
@@ -109,7 +121,9 @@ AddTime |
 SetWinner |
 ClearTimeArr |
 SetModal |
-SetModalVisibility;
+SetModalVisibility |
+SetSort |
+SetOrder;
 
 export enum ActionTypes {
   SET_GARAGE_PAGE = 'set_garage_page',
@@ -127,4 +141,6 @@ export enum ActionTypes {
   SET_MODAL = 'set_modal',
   SET_WINNER = 'set_winner',
   SET_MODAL_VISIBILITY = 'set_modal_visibility',
+  SET_SORT = 'set_sort',
+  SET_ORDER = 'set_order',
 }

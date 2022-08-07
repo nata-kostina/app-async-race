@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Flex from '../../../components/Flex';
+import { StateContext } from '../../../state/State';
+import { ActionTypes } from '../../../state/types';
 import { OrderType, SortType, WinnerForStats } from '../../../types/types';
 import WinnersItem from '../WinnerItem/WinnerItem';
 import { StyledTable, StyledBtn } from './styles';
 
 interface WinnersProps {
   winners: WinnerForStats[];
-  sortWinners: (sort: SortType, order: OrderType) => void;
 }
-function WinnersList({ winners, sortWinners }: WinnersProps) {
+function WinnersList({ winners }: WinnersProps) {
+  const { dispatch } = useContext(StateContext);
+
   return (
     <StyledTable>
       <thead>
@@ -22,14 +25,20 @@ function WinnersList({ winners, sortWinners }: WinnersProps) {
               <StyledBtn
                 type="button"
                 className="btn btn-sort_asc"
-                onClick={() => sortWinners(SortType.WINS, OrderType.ASC)}
+                onClick={() => {
+                  dispatch({ type: ActionTypes.SET_SORT, payload: SortType.WINS });
+                  dispatch({ type: ActionTypes.SET_ORDER, payload: OrderType.ASC });
+                }}
               >
                 ↓
               </StyledBtn>
               <StyledBtn
                 type="button"
                 className="btn btn-sort_desc"
-                onClick={() => sortWinners(SortType.WINS, OrderType.DESC)}
+                onClick={() => {
+                  dispatch({ type: ActionTypes.SET_SORT, payload: SortType.WINS });
+                  dispatch({ type: ActionTypes.SET_ORDER, payload: OrderType.DESC });
+                }}
               >
                 ↑
               </StyledBtn>
@@ -41,14 +50,20 @@ function WinnersList({ winners, sortWinners }: WinnersProps) {
               <StyledBtn
                 type="button"
                 className="btn btn-sort_asc"
-                onClick={() => sortWinners(SortType.TIME, OrderType.ASC)}
+                onClick={() => {
+                  dispatch({ type: ActionTypes.SET_SORT, payload: SortType.TIME });
+                  dispatch({ type: ActionTypes.SET_ORDER, payload: OrderType.ASC });
+                }}
               >
                 ↓
               </StyledBtn>
               <StyledBtn
                 type="button"
                 className="btn btn-sort_desc"
-                onClick={() => sortWinners(SortType.TIME, OrderType.DESC)}
+                onClick={() => {
+                  dispatch({ type: ActionTypes.SET_SORT, payload: SortType.TIME });
+                  dispatch({ type: ActionTypes.SET_ORDER, payload: OrderType.DESC });
+                }}
               >
                 ↑
               </StyledBtn>

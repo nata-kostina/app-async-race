@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { ModalType } from '../types/types';
+import { ModalType, OrderType, SortType } from '../types/types';
 import { IState, IStateContext } from './types';
 
 export const initialState: IState = {
@@ -14,6 +14,8 @@ export const initialState: IState = {
   winner: null,
   modal: ModalType.DEFAULT,
   modalVisibility: false,
+  sort: SortType.ID,
+  order: OrderType.ASC,
 };
 
 export const StateContext = createContext<IStateContext>({ state: initialState, dispatch: () => null });
