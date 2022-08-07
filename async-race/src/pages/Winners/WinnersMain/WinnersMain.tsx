@@ -1,71 +1,28 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
-  useState, useEffect, SetStateAction, Dispatch,
+  SetStateAction, Dispatch, useContext,
 } from 'react';
-import Header from '../../../components/Header/Header';
 import Pagination from '../../../components/ui/Pagination/Pagination';
 import { StateContext } from '../../../state/State';
 import {
-  Car,
-  IState,
-  OrderType, SortType, Winner,
+  OrderType, SortType,
   WinnerForStats,
 } from '../../../types/types';
 import WinnersList from '../WinnersTable/WinnersTable';
 import AppLoader from '../../../services/AppLoader';
-import CarIcon from '../../Garage/CarIcon/CarIcon';
-import { getPagesNum } from '../../../utils/utils';
-import { winnersLimitPerPage } from '../../../data/constants';
 import StyledMain from './styles';
 import Flex from '../../../components/Flex';
-import CarSVG from '../../../components/CarSVG';
+import useFetchWinners from '../hooks/useFetchWinners';
+import prepareWinnersForDisplay from '../WinnersActions';
+import { ActionTypes } from '../../../state/types';
 
-interface GarageProps {
-  state: IState;
-}
-function WinnersMain({ state }: GarageProps) {
-  const [currentPage, setCurrentPage] = useState(state.currentWinnersPage);
-  const [totalPagesNum, setTotalPagesNum] = useState() as [number, Dispatch<SetStateAction<number>>];
+function WinnersMain() {
+  const { state, dispatch } = useContext(StateContext);
 
-  const onPageChanged = (value: number) => {
-    setCurrentPage(value);
-    state.currentWinnersPage = value;
-  };
+  const onPageChanged = (value: number) => dispatch({ type: ActionTypes.SET_WINNERS_PAGE, payload: value });
+  const [totalPagesNum, winners, setWinners] = useFetchWinners(state.currentWinnersPage) as [number, WinnerForStats[], Dispatch<SetStateAction<WinnerForStats[]>>];
 
-  const [winners, setWinners] = useState([] as WinnerForStats[]) as [WinnerForStats[], Dispatch<SetStateAction<WinnerForStats[]>>];
-  async function prepareWinnersForDisplay(allWinners: Winner[]): Promise<WinnerForStats[]> {
-    const promises = allWinners.map((winner) => AppLoader.getCar(winner.id));
-    const cars = await Promise.allSettled(promises)
-      .then((responses) => responses.filter((promise) => promise.status === 'fulfilled') as PromiseFulfilledResult<Car>[])
-      .then((data: PromiseFulfilledResult<Car>[]) => data.map((el) => el.value));
-    const winnersForStats = allWinners.map((winner) => {
-      const car = cars.find((c) => c.id === winner.id) as Car;
-      return {
-        carId: winner.id,
-        name: car.name,
-        time: winner.time,
-        image: () => CarSVG({ colorProp: car.color }),
-        winsNum: winner.wins,
-      } as WinnerForStats;
-    });
-    return winnersForStats;
-  }
-  useEffect(() => {
-    async function getWinners() {
-      const winnersResp = await AppLoader.getWinners(currentPage, SortType.ID, OrderType.ASC);
-      const winnersForStats = await prepareWinnersForDisplay(winnersResp);
-      const num = await AppLoader.getTotalWinnersNum();
-      setTotalPagesNum(Number(num));
-      const pages = getPagesNum(Number(num), winnersLimitPerPage);
-      setTotalPagesNum(pages);
-      setWinners(winnersForStats);
-    }
-    getWinners();
-  }, [currentPage]);
   const sortWinners = async (sort: SortType, order: OrderType) => {
-    const sortedWinners = await AppLoader.getWinners(currentPage, sort, order);
+    const sortedWinners = await AppLoader.getWinners(state.currentWinnersPage, sort, order);
     const winnersForStats = await prepareWinnersForDisplay(sortedWinners);
     setWinners(winnersForStats);
   };
@@ -76,7 +33,7 @@ function WinnersMain({ state }: GarageProps) {
         <span>
           Page
           {' '}
-          {currentPage}
+          {state.currentWinnersPage}
         </span>
         <span>
           Total Winners Number
@@ -85,7 +42,7 @@ function WinnersMain({ state }: GarageProps) {
         </span>
       </Flex>
       <div>
-        <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={false} />
+        <Pagination total={totalPagesNum} currentPage={state.currentWinnersPage} onPageChanged={onPageChanged} isDisabled={false} />
         <WinnersList winners={winners} sortWinners={sortWinners} />
       </div>
 

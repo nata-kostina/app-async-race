@@ -1,3 +1,4 @@
+export const rootId = 'root';
 export const baseUrl = 'http://127.0.0.1:3000';
 
 export const carsLimitPerPage = 7;

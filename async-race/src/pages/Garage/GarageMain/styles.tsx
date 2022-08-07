@@ -38,7 +38,11 @@ transition: all .2s ease-in;
   font-size: 24px;
 }
 
-&:hover {
+&:disabled {
+  background-image: none;
+  background-color: #e2e2e2;
+}
+&:hover:enabled {
   cursor: pointer;
   background-image: url(${TexturePink});
 }

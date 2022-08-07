@@ -1,75 +1,47 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable max-len */
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable no-promise-executor-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
-  useState, useEffect, Dispatch, SetStateAction,
+  useState, Dispatch, SetStateAction, useContext,
 } from 'react';
 import Pagination from '../../../components/ui/Pagination/Pagination';
 import {
-  AnimationElement, Car, DriveCarResult, EngineStatus, IState, Result, UpdateCarParams, Winner,
+  Car, UpdateCarParams, WinnerCar,
+  ModalType,
 } from '../../../types/types';
 import AppLoader from '../../../services/AppLoader';
 import FormCreate from '../FormCreate/FormCreate';
 import {
-  generateRandomCars, convertMsToSeconds, addTimeToAnimationElement, getPagesNum,
+  generateRandomCars,
 } from '../../../utils/utils';
-import { startEngine, getTimeOfAllCars } from '../CarActions';
-import { useToggleBtn } from '../hooks/CarHooks';
-import useDidMountEffect from '../../../hooks/GeneralHooks';
-import Modal from '../../../components/ui/Modal/Modal';
-import useModal from '../../../components/ui/Modal/useModal';
-import { carsLimitPerPage } from '../../../data/constants';
 import Flex from '../../../components/Flex';
 import CarList from '../CarList/CarList';
 import { Container, StyledBtn, StyledMain } from './styles';
+import { StateContext } from '../../../state/State';
+import useRaceAll from '../hooks/useStartRaceAll';
+import useGetWinner from '../hooks/useGetWinner';
+import useStopRaceAll from '../hooks/useStopRaceAll';
+import useHandleWinner from '../hooks/useHandleWinner';
+import useFetchCars from '../hooks/useFetchCars';
+import { ActionTypes } from '../../../state/types';
+import { useToggleBtn } from '../../../hooks/GeneralHooks';
+import Portal from '../../../components/ui/Modal/Portal';
 
-const useCars = (currentPage: number, hasBeenUpdated: boolean) => {
-  const [cars, setCars] = useState<Car[]>([]);
-  const [totalCarsNum, setTotalCarsNum] = useState() as [number, Dispatch<SetStateAction<number>>];
-  const [totalPagesNum, setTotalPagesNum] = useState() as [number, Dispatch<SetStateAction<number>>];
-  useEffect(() => {
-    let isActual = true;
-    const fetchData = async () => {
-      const data: Car[] = await AppLoader.getCars(currentPage);
-      if (isActual) {
-        const num = await AppLoader.getTotalCarsNum();
-        setTotalCarsNum(Number(num));
-        setCars(data);
-        const pages = getPagesNum(Number(num), carsLimitPerPage);
-        setTotalPagesNum(pages);
-      } else console.log('This fetch is not actual');
-    };
-    fetchData();
-    return () => {
-      isActual = false;
-    };
-  }, [currentPage, hasBeenUpdated]);
-  return [cars, setCars, totalCarsNum, totalPagesNum];
-};
-interface GarageProps {
-  state: IState;
-}
-function GarageMain({ state }: GarageProps) {
-  const [currentPage, setCurrentPage] = useState(state.currentGaragePage);
-
-  const onPageChanged = (value: number) => {
-    setCurrentPage(value);
-    state.currentGaragePage = value;
-  };
-  const [modalHeader, setModalHeader] = useState('');
-  const [modalContent, setModalContent] = useState() as [JSX.Element, Dispatch<SetStateAction<JSX.Element>>];
-
-  const [showModal, setShowModal] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+function GarageMain() {
+  const { state, dispatch } = useContext(StateContext);
+  const [isBtnRaceDisabled, setIsRaceBtnDisabled] = useState(false);
   const [hasBeenUpdated, setHasBeenUpdated] = useState(false);
   const [hasBeenReset, setHasBeenReset] = useState(false);
-  const [isRacing, setIsRacing] = useState(false);
-  const [isBtnRaceDisabled, toggleRaceBtn] = useToggleBtn() as [boolean, () => void];
+  const [hasBeenRaceStarted, setHasBeenRaceStarted] = useState(false);
   const [isPaginationDisabled, togglePaginationBtns] = useToggleBtn() as [boolean, () => void];
-  // eslint-disable-next-line max-len
-  const [cars, setCars, totalCarsNum, totalPagesNum] = useCars(currentPage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string, number];
+  const [cars, setCars, totalCarsNum, totalPagesNum] = useFetchCars(state.currentGaragePage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string, number];
+  useRaceAll(cars, state.isRaceStarted);
+  useGetWinner(cars, setHasBeenRaceStarted);
+  const onPageChanged = (value: number) => dispatch({ type: ActionTypes.SET_GARAGE_PAGE, payload: value });
+  const onFinishRaceActions = () => {
+    setIsRaceBtnDisabled(false);
+    togglePaginationBtns();
+  };
+  useStopRaceAll(hasBeenRaceStarted, setHasBeenRaceStarted, onFinishRaceActions);
+  useHandleWinner(state.winner as WinnerCar, hasBeenRaceStarted);
   const updateCar = async (values: UpdateCarParams, car: Car) => {
     try {
       await AppLoader.updateCar(values, car.id.toString());
@@ -78,126 +50,51 @@ function GarageMain({ state }: GarageProps) {
       console.log('Ooops! Updating was failed');
     }
   };
-
+  const deleteFromWinners = async (id: string) => {
+    try {
+      await AppLoader.deleteWinner(id);
+    } catch (e) {
+      console.log('deleteFromWinners Ooops! Deleting was failed');
+    }
+  };
   const deleteCar = async (id: string) => {
     try {
       await AppLoader.deleteCar(id);
-      await AppLoader.deleteWinner(id);
       setHasBeenUpdated(!hasBeenUpdated);
+      deleteFromWinners(id);
     } catch (e) {
-      console.log('Ooops! Deleting was failed');
+      // console.log(' deleteCar Ooops! Deleting was failed');
     }
   };
-
   const createCar = async (values: UpdateCarParams) => {
-    if (values.name.length === 0) {
-      setModalHeader('Winner');
-      const element = (
-        <div>
-          Car Name can`t be empty.
-        </div>
-      );
-      setModalContent(element);
-      setShowModal(true);
-      return;
-    }
     try {
       const data: Car = await AppLoader.createCar(values);
       setCars([...cars, data]);
       setHasBeenUpdated(!hasBeenUpdated);
     } catch (e) {
-      console.log('Ooops! Creating was failed');
+      // console.log('Ooops! Creating was failed');
     }
   };
-
-  const generateCars = () => generateRandomCars().forEach((car) => createCar(car));
-  const [animElements, setAnimElements] = useState([] as AnimationElement[]);
-  const [asyncActionResults, setAsyncActionResults] = useState([] as Promise<DriveCarResult>[]);
-  const onFinishRacing = async (promises: Promise<DriveCarResult>[]) => {
-    await Promise.allSettled(promises);
-    toggleRaceBtn();
+  const onGenerateClicked = () => generateRandomCars().forEach((car) => createCar(car));
+  const onRaceClicked = async () => {
+    setIsRaceBtnDisabled(true);
     togglePaginationBtns();
-    setIsRacing(false);
-    state.isRacing = false;
-    setAsyncActionResults([]);
+    dispatch({ type: ActionTypes.SET_IS_RACE_STARTED, payload: true });
   };
-  const [currentWinner, setCurrentWinner] = useState({} as Car);
-
-  function getBestTime(prevTime: number, newTime: number) {
-    return newTime < prevTime ? newTime : prevTime;
-  }
-
-  async function handleWinner(winnerCar: Car, time: number) {
-    await AppLoader.getWinner(winnerCar.id)
-      .then((winner) => {
-        const bestTime = getBestTime(winner.time, time);
-        AppLoader.updateWinner({ wins: winner.wins + 1, time: bestTime }, winnerCar.id.toString());
-      })
-      .catch((e) => {
-        AppLoader.createWinner({ id: winnerCar.id, wins: 1, time });
-      });
-  }
-  const startRace = () => {
-    async function raceAll(promises: Promise<DriveCarResult>[], ids: number[]): Promise<number> {
-      if (promises.length === 0) {
-        onFinishRacing([]);
-        return -1;
-      }
-      const { carId, result, time } = await Promise.race(promises);
-      if (result === Result.FAIL) {
-        const failedIndex = ids.findIndex((i) => i === carId);
-        const restPromises = [...promises.slice(0, failedIndex), ...promises.slice(failedIndex + 1, promises.length)];
-        const restIds = [...ids.slice(0, failedIndex), ...ids.slice(failedIndex + 1, ids.length)];
-        return raceAll(restPromises, restIds);
-      }
-      const winnerCar = cars.find((car) => car.id === carId) as Car;
-      setCurrentWinner(winnerCar);
-      setModalHeader('Winner');
-      const element = (
-        <div>
-          Winner is
-          {' '}
-          {winnerCar.id}
-        </div>
-      );
-      setModalContent(element);
-      setShowModal(true);
-      onFinishRacing(promises);
-      const timeSec = convertMsToSeconds(time);
-      handleWinner(winnerCar, timeSec);
-      return (winnerCar as Car).id as number;
-    }
-
-    if (asyncActionResults.length === cars.length) {
-      const ids = cars.map((c) => c.id);
-      raceAll(asyncActionResults, ids);
-    }
-  };
-  useDidMountEffect(startRace, [asyncActionResults]);
-
-  const race = async () => {
-    if (cars.length === 0) return;
-    toggleRaceBtn();
-    togglePaginationBtns();
-    const timeArr = await getTimeOfAllCars(cars);
-    addTimeToAnimationElement(timeArr, setAnimElements);
-    setIsRacing(true);
-    state.isRacing = true;
-  };
-
-  const startDriving = (asyncAction: () => Promise<DriveCarResult>): void => {
-    const result = asyncAction();
-    setAsyncActionResults((prevState) => [...prevState, result]);
-  };
-  const reset = () => {
+  const onResetClicked = () => {
     setHasBeenReset(true);
   };
-
+  const onCreateClicked = () => {
+    dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: true });
+    dispatch({ type: ActionTypes.SET_MODAL, payload: ModalType.FORM_CREATE });
+  };
+  const closeModal = () => {
+    dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: false });
+  };
   return (
     <StyledMain>
       <Container>
         <Flex direction="row" align="center" justify="space-between">
-
           <Flex direction="column" align="start" justify="start">
             <span>
               Garage
@@ -212,59 +109,75 @@ function GarageMain({ state }: GarageProps) {
               {' '}
               {state.currentGaragePage}
             </span>
-            <Flex direction="column" align="start" justify="start">
-              <FormCreate createCar={createCar} />
-            </Flex>
           </Flex>
           <Flex direction="column" align="end" justify="start">
             <StyledBtn
               type="button"
-              onClick={generateCars}
+              onClick={onGenerateClicked}
             >
               <span>Generate Random Cars</span>
             </StyledBtn>
             <StyledBtn
               type="button"
-              onClick={race}
+              onClick={onRaceClicked}
               disabled={isBtnRaceDisabled}
             >
               <span>Start Race</span>
             </StyledBtn>
             <StyledBtn
               type="button"
-              onClick={reset}
+              onClick={onResetClicked}
             >
               <span>Reset</span>
             </StyledBtn>
             <StyledBtn
               type="button"
-              onClick={reset}
+              onClick={onCreateClicked}
             >
               <span>Create A Car</span>
             </StyledBtn>
           </Flex>
         </Flex>
-
-        <Pagination total={totalPagesNum} currentPage={currentPage} onPageChanged={onPageChanged} isDisabled={isPaginationDisabled} />
+        <Pagination
+          total={totalPagesNum}
+          currentPage={state.currentGaragePage}
+          onPageChanged={onPageChanged}
+          isDisabled={isPaginationDisabled}
+        />
       </Container>
       <CarList
         cars={cars}
         updateCar={updateCar}
         deleteCar={deleteCar}
-        isRacing={isRacing}
-        animElements={animElements}
-        setAnimElements={setAnimElements}
-        startDriving={startDriving}
         hasBeenReset={hasBeenReset}
         setHasBeenReset={setHasBeenReset}
       />
-      <Modal
-        isShown={showModal}
-        headerText={modalHeader}
-        onCloseClicked={() => setShowModal(false)}
-      >
-        {modalContent}
-      </Modal>
+      {state.modalVisibility && (
+        <Portal closeModal={closeModal}>
+          {state.modal === ModalType.FORM_CREATE && (
+            <FormCreate
+              createCar={createCar}
+              closeModal={closeModal}
+            />
+          )}
+          {state.modal === ModalType.SHOW_WINNER && (
+            <div>
+              <h3>
+                Winner is
+                {' '}
+                {(state.winner as WinnerCar).name}
+              </h3>
+              <p>
+                Time
+                {' '}
+                {(state.winner as WinnerCar).time}
+                {' '}
+                seconds
+              </p>
+            </div>
+          )}
+        </Portal>
+      )}
     </StyledMain>
   );
 }

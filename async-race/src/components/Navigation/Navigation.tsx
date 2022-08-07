@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyledLink, StyledNavigation } from './styles';
 import { NavigationProps } from '../../types/types';
+import { StateContext } from '../../state/State';
 
 function Navigation({ theme }: NavigationProps) {
-  const onWinnersLinkClicked = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    console.log(e);
-    // if (state.isRacing) {
-    //   e.preventDefault();
-    //   setShowModal(true);
-    // }
+  const { state } = useContext(StateContext);
+  const onLinkClicked = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (state.isRaceStarted) {
+      e.preventDefault();
+    }
   };
   return (
     <StyledNavigation theme={theme}>
-      <StyledLink to="/garage" theme={theme}>Garage</StyledLink>
-      <StyledLink to="/winners" onClick={(e) => onWinnersLinkClicked(e)} theme={theme}>Winners</StyledLink>
+      <StyledLink to="/garage" onClick={onLinkClicked} theme={theme}>Garage</StyledLink>
+      <StyledLink to="/winners" onClick={onLinkClicked} theme={theme}>Winners</StyledLink>
     </StyledNavigation>
   );
 }

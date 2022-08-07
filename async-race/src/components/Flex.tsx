@@ -7,7 +7,7 @@ display: flex;
 flex-direction: ${({ direction }) => direction || 'column'};
 align-items: ${({ align }) => align || 'stretch'};
 justify-content: ${({ justify }) => justify || 'center'};
-height: 100%;
+height: ${({ height }) => height || '100%'};
 margin: ${({ margin }) => margin || '0'};
 padding: ${({ padding }) => padding || '0'};
 `;

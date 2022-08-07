@@ -1,10 +1,19 @@
 import { createContext } from 'react';
-import { IState } from '../types/types';
+import { ModalType } from '../types/types';
+import { IState, IStateContext } from './types';
 
-export const State: IState = {
+export const initialState: IState = {
   winners: [],
   isRacing: false,
+  isRaceStarted: false,
   currentGaragePage: 1,
   currentWinnersPage: 1,
+  animElements: [],
+  driveCarPromises: [],
+  carsTime: [],
+  winner: null,
+  modal: ModalType.DEFAULT,
+  modalVisibility: false,
 };
-export const StateContext = createContext(State);
+
+export const StateContext = createContext<IStateContext>({ state: initialState, dispatch: () => null });

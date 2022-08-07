@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import Flex from '../../../components/Flex';
 import { OrderType, SortType, WinnerForStats } from '../../../types/types';

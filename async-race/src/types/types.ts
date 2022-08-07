@@ -79,17 +79,14 @@ export interface WinnerForStats {
   winsNum: number;
 }
 
-export interface IState {
-  winners: WinnerForStats[],
-  isRacing: boolean,
-  currentGaragePage: number,
-  currentWinnersPage: number,
-}
-
-export interface Winner {
+export interface GetWinnerResponse {
   id: number,
   wins: number,
   time: number,
+}
+
+export interface WinnerCar extends Car {
+  time: number;
 }
 
 export enum SortType {
@@ -115,6 +112,7 @@ export interface FlexProps {
   direction?: string;
   margin?: string;
   padding?: string;
+  height?: string;
   children: React.ReactNode;
 }
 export interface StyledProps {
@@ -132,4 +130,18 @@ export interface ThemeProps {
 export interface ButtonProps {
   disabled?: boolean;
   color?: string;
+}
+
+export enum GarageActions {
+  CREATE = 'create',
+  EDIT = 'edit',
+  DELETE = 'delete',
+  GENERATE = 'generate',
+  DEFAULT = 'default',
+}
+
+export enum ModalType {
+  FORM_CREATE = 'form_create',
+  SHOW_WINNER = 'show_winner',
+  DEFAULT = 'default',
 }

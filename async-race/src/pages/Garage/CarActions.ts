@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import {
   AnimationElement, Car, DriveCarResult, EngineStatus, Result,
 } from '../../types/types';
@@ -20,7 +19,7 @@ export const stopCar = async (element: AnimationElement) => {
   try {
     await AppLoader.stopEngine(element.carId.toString(), EngineStatus.STOPPED);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
   }
 };
 
@@ -37,8 +36,7 @@ export const getTimeOfAllCars = (cars: Car[]): Promise<{
 
 export async function driveCar(id: number, time: number, onSuccessFinishActions: () => void, onInterruptActions: () => void): Promise<DriveCarResult> {
   const result = await AppLoader.driveCar(id.toString(), EngineStatus.DRIVE)
-    .then((response) => {
-      console.log(response);
+    .then(() => {
       onSuccessFinishActions();
       return {
         carId: id,
@@ -46,8 +44,7 @@ export async function driveCar(id: number, time: number, onSuccessFinishActions:
         time,
       };
     })
-    .catch((e) => {
-      console.log(e);
+    .catch(() => {
       onInterruptActions();
       return {
         carId: id,
@@ -57,24 +54,10 @@ export async function driveCar(id: number, time: number, onSuccessFinishActions:
     });
   return result;
 }
-export const startCarAnimation = (element: AnimationElement, onStartActions: () => void, onFinishAnimationActions: () => void) => {
-  const anim = startAnimation(element.carRef, element.time as number, onFinishAnimationActions);
+export const startCarAnimation = (element: AnimationElement, onStartActions: () => void) => {
   onStartActions();
+  const anim = startAnimation(element.carRef, element.time as number);
   return anim;
 };
 
 export const findAnimationElement = (animElements: AnimationElement[], id: number) => animElements.find((el) => el.carId === id) as AnimationElement;
-// const startCar = async (id: string) => {
-//   const { velocity, distance } = await AppLoader.startEngine(id, EngineStatus.STARTED);
-//   const time = calculateTime(velocity, distance);
-//   animRef.current = startAnimation(carRef, time, setIsFinished);
-//   toggleButtons();
-//   setIsFinished(false);
-
-//   await AppLoader.driveCar(id, EngineStatus.DRIVE)
-//     .then((response) => console.log(response))
-//     .catch((e) => {
-//       console.log(e);
-//       if (!isFinished) { stopCar(id); }
-//     });
-// };

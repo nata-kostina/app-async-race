@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { Dispatch, SetStateAction } from 'react';
 import { carBrand, carModal, randomCarsNum } from '../data/constants';
 import { AnimationElement, CarValues } from '../types/types';
@@ -22,6 +21,8 @@ export const generateRandomCars = (): CarValues[] => {
   return cars;
 };
 
+export const convertMsToSeconds = (ms: number) => Number((ms / 1000).toFixed(2));
+
 export const calculateTime = (velocity: number, distance: number): number => {
   const time = Number(parseFloat((distance / velocity).toString()).toFixed(2));
   return time;
@@ -34,14 +35,19 @@ export const addTimeToAnimationElement = (
   }[],
   setAnimElements: Dispatch<SetStateAction<AnimationElement[]>>,
 ) => timeArr.forEach((value) => {
-  setAnimElements((prevState) => prevState.map((el) => {
-    if (el.carId.toString() === value.id) {
-      return { ...el, time: value.time };
+  setAnimElements((prevState) => {
+    if (prevState.length === 0) {
+      return [];
     }
-    return el;
-  }));
+    return prevState.map((el) => {
+      if (el.carId.toString() === value.id) {
+        return { ...el, time: value.time };
+      }
+      return el;
+    });
+  });
 });
 
-export const convertMsToSeconds = (ms: number) => Number((ms / 1000).toFixed(2));
-
 export const getPagesNum = (totalItemsNum: number, limiPerPage: number) => Math.ceil(totalItemsNum / limiPerPage);
+
+export const getBestTime = (prevTime: number, newTime: number) => (newTime < prevTime ? newTime : prevTime);

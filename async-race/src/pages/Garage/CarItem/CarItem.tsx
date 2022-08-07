@@ -1,79 +1,41 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-empty */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable max-len */
 import React, {
-  MutableRefObject, useRef, Dispatch, SetStateAction, useEffect,
+  MutableRefObject, useRef, Dispatch, SetStateAction, useEffect, useContext, useState,
 } from 'react';
 import {
-  AnimationElement, Car, DriveCarResult, EngineStatus,
+  Car,
 } from '../../../types/types';
 import CarIcon from '../CarIcon/CarIcon';
-import AppLoader from '../../../services/AppLoader';
-import { calculateTime } from '../../../utils/utils';
-import { useOnFinishAnimation, useToggleButtons } from '../hooks/CarHooks';
-import {
-  driveCar, findAnimationElement, startCarAnimation, stopCar,
-} from '../CarActions';
 import {
   FlagFinish, StyledBtn, StyledLi, StyledName, StyledStreet,
 } from './styles';
 import Flex from '../../../components/Flex';
 import { colorStart, colorStop } from '../../../data/constants';
+import { StateContext } from '../../../state/State';
+import useStartDrive from '../hooks/useStartDrive';
+import useStartRace from '../hooks/useStartRace';
+import useStopDrive from '../hooks/useStopDrive';
+import { useToggleButtons } from '../../../hooks/GeneralHooks';
 
 interface CarItemProps {
   car: Car;
   onEditClicked: (car: Car) => void;
   onDeleteClicked: (id: number) => void;
-  isRacing: boolean;
-  onStartRace: (anim: AnimationElement) => void;
-  animElements: AnimationElement[],
-  setAnimElements: Dispatch<SetStateAction<AnimationElement[]>>,
-  startDriving: (asyncAction: () => Promise<DriveCarResult>) => void,
   hasBeenReset: boolean,
   setHasBeenReset: Dispatch<SetStateAction<boolean>>,
 }
 
 function CarItem({
-  car, onEditClicked, onDeleteClicked, isRacing, onStartRace, animElements, setAnimElements, startDriving, hasBeenReset, setHasBeenReset,
+  car, onEditClicked, onDeleteClicked, hasBeenReset, setHasBeenReset,
 }: CarItemProps) {
+  const { state } = useContext(StateContext);
   const carRef = useRef() as MutableRefObject<HTMLDivElement>;
   const animRef = useRef(new Animation()) as MutableRefObject<Animation>;
   const [isBtnStartDisabled, isBtnStopDisabled, toggleButtons] = useToggleButtons() as [boolean, boolean, () => void];
-  const [isFinished, setIsFinished] = useOnFinishAnimation(toggleButtons) as [boolean, Dispatch<SetStateAction<boolean>>];
-
-  useEffect(() => {
-    const anim = animElements.find((el) => el.carId === car.id);
-    if (!anim) {
-      setAnimElements((prevState) => [...prevState, {
-        animRef, carRef, carId: car.id,
-      }]);
-    }
-  }, []);
-
-  const onStartActions = () => {
-    toggleButtons();
-    setIsFinished(false);
-  };
-  const onSuccessFinishActions = (element: AnimationElement) => {
-    setIsFinished(true);
-    stopCar(element);
-  };
-  const onFinishAnimationActions = () => {
-    setIsFinished(true);
-  };
-  const onInterruptActions = (element: AnimationElement) => {
-    stopCar(element);
-    setIsFinished(true);
-  };
-  useEffect(() => {
-    if (isRacing) {
-      setIsFinished(false);
-      const element = findAnimationElement(animElements, car.id);
-      element.animRef.current = startCarAnimation(element, onStartActions, onFinishAnimationActions);
-      startDriving(() => driveCar(car.id, element.time as number, () => onSuccessFinishActions(element), () => onInterruptActions(element)));
-    }
-  }, [isRacing]);
+  const [isDriving, setIsDriving] = useState(false);
+  const [hasBeenDriven, setHasBeenDriven] = useState(false);
+  useStartDrive(car, animRef, isDriving, setIsDriving, toggleButtons, carRef);
+  useStopDrive(car, hasBeenDriven);
+  useStartRace(car, animRef, state.isRacing, carRef);
 
   useEffect(() => {
     if (hasBeenReset) {
@@ -81,21 +43,17 @@ function CarItem({
       setHasBeenReset(false);
     }
   }, [hasBeenReset]);
+
   const onStartClicked = async () => {
-    const { velocity, distance } = await AppLoader.startEngine(car.id.toString(), EngineStatus.STARTED);
-    const time = calculateTime(velocity, distance);
-    animRef.current = startCarAnimation({
-      animRef, carRef, carId: car.id, time,
-    }, onStartActions, onFinishAnimationActions);
-    driveCar(car.id, time, () => onSuccessFinishActions({
-      animRef, carRef, carId: car.id, time,
-    }), () => onInterruptActions({
-      animRef, carRef, carId: car.id, time,
-    }));
+    setHasBeenDriven(false);
+    setIsDriving(true);
+    toggleButtons();
   };
+
   const onStopClicked = async () => {
-    stopCar({ animRef, carRef, carId: car.id });
-    setIsFinished(true);
+    setHasBeenDriven(true);
+    setIsDriving(false);
+    toggleButtons();
   };
 
   return (

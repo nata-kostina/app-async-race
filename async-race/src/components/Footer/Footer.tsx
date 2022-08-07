@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import Flex from '../Flex';
 import { ImgContainer, StyledFooter } from './styles';
 import Img from '../../assets/images/footer-img.png';

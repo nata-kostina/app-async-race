@@ -1,9 +1,8 @@
-/* eslint-disable max-len */
 import { carsLimitPerPage, winnersLimitPerPage } from '../data/constants';
 import {
   Car, EngineResponse, EngineStatus, UpdateCarParams, EngineDriveModeResponse, SortType, OrderType,
-  Winner,
   UpdateWinnerParams,
+  GetWinnerResponse,
 } from '../types/types';
 import { load, getHeaders } from './loader';
 
@@ -14,7 +13,7 @@ const AppLoader = {
     queryParams: { _page: currentPage.toString(), _limit: carsLimitPerPage.toString() },
   })
     .then((data) => data)
-    .catch((error: Error): Car[] => { console.log(error); return []; }),
+    .catch((): Car[] => []),
 
   getCar: async (id: number): Promise<Car> => load<Car>({
     url: `garage/${id}`,
@@ -56,7 +55,6 @@ const AppLoader = {
     queryParams: { id, status },
   })
     .then((data) => data),
-  // .catch((error: Error): Car[] => { console.log(error); return []; }),
 
   stopEngine: async (id: string, status: EngineStatus): Promise<EngineResponse> => load<EngineResponse>({
     url: 'engine',
@@ -74,7 +72,7 @@ const AppLoader = {
     .then((data) => data)
     .catch((error: string) => { throw new Error(error); }),
 
-  getWinners: async (currentPage: number, sort: SortType, order: OrderType): Promise<Winner[]> => load<Winner[]>({
+  getWinners: async (currentPage: number, sort: SortType, order: OrderType): Promise<GetWinnerResponse[]> => load<GetWinnerResponse[]>({
     url: 'winners',
     method: 'GET',
     queryParams: {
@@ -85,7 +83,7 @@ const AppLoader = {
     },
   })
     .then((data) => data)
-    .catch((error: Error): Winner[] => { console.log(error); return []; }),
+    .catch((): GetWinnerResponse[] => []),
 
   getWinnersTotalCount: async (): Promise<string> => getHeaders({
     url: 'winners',
@@ -94,7 +92,7 @@ const AppLoader = {
   })
     .then((headers: Headers) => headers.get('X-Total-Count') as string),
 
-  getWinner: async (id: number): Promise<Winner> => load<Winner>({
+  getWinner: async (id: number): Promise<GetWinnerResponse> => load<GetWinnerResponse>({
     url: `winners/${id}`,
     method: 'GET',
   })
@@ -112,9 +110,10 @@ const AppLoader = {
     url: `winners/${id}`,
     method: 'DELETE',
   })
-    .then((data) => data),
+    .then((data) => data)
+    .catch((error: Error) => { throw new Error(error.message); }),
 
-  createWinner: async (dataParams: UpdateWinnerParams): Promise<Winner> => load<Winner>({
+  createWinner: async (dataParams: UpdateWinnerParams): Promise<GetWinnerResponse> => load<GetWinnerResponse>({
     url: 'winners',
     method: 'POST',
     dataParams,

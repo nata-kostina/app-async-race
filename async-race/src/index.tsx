@@ -3,23 +3,23 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import Main from './pages/Main/Main';
-import { StateContext, State } from './state/State';
 import GaragePage from './pages/Garage/GaragePage';
-import WinnersContainer from './pages/Winners/WinnersPage';
+import WinnersPage from './pages/Winners/WinnersPage';
 import GlobalStyle from './styles/GlobalStyles';
+import StateProvider from './state/StateProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <BrowserRouter>
-    <GlobalStyle />
-    <StateContext.Provider value={State}>
+  <StateProvider>
+    <BrowserRouter>
+      <GlobalStyle />
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="garage" element={<GaragePage />} />
-        <Route path="winners" element={<WinnersContainer />} />
+        <Route path="winners" element={<WinnersPage />} />
       </Routes>
-    </StateContext.Provider>
-  </BrowserRouter>,
+    </BrowserRouter>
+  </StateProvider>,
 );
