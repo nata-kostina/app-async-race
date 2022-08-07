@@ -24,6 +24,7 @@ import useFetchCars from '../hooks/useFetchCars';
 import { ActionTypes } from '../../../state/types';
 import { useToggleBtn } from '../../../hooks/GeneralHooks';
 import Portal from '../../../components/ui/Modal/Portal';
+import FormEdit from '../FormEdit/FormEdit';
 
 function GarageMain() {
   const { state, dispatch } = useContext(StateContext);
@@ -91,6 +92,12 @@ function GarageMain() {
   const closeModal = () => {
     dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: false });
   };
+  const [carToEdit, setCarToEdit] = useState() as [Car, Dispatch<SetStateAction<Car>>];
+  const onEditClicked = (car: Car) => {
+    setCarToEdit(car);
+    dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: true });
+    dispatch({ type: ActionTypes.SET_MODAL, payload: ModalType.FORM_EDIT });
+  };
   return (
     <StyledMain>
       <Container>
@@ -151,13 +158,13 @@ function GarageMain() {
         deleteCar={deleteCar}
         hasBeenReset={hasBeenReset}
         setHasBeenReset={setHasBeenReset}
+        onEditClicked={onEditClicked}
       />
       {state.modalVisibility && (
         <Portal closeModal={closeModal}>
           {state.modal === ModalType.FORM_CREATE && (
             <FormCreate
               createCar={createCar}
-              closeModal={closeModal}
             />
           )}
           {state.modal === ModalType.SHOW_WINNER && (
@@ -175,6 +182,12 @@ function GarageMain() {
                 seconds
               </p>
             </div>
+          )}
+          {state.modal === ModalType.FORM_EDIT && (
+            <FormEdit
+              onCarUpdated={updateCar}
+              carToEdit={carToEdit}
+            />
           )}
         </Portal>
       )}

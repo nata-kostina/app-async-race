@@ -142,6 +142,7 @@ export enum GarageActions {
 
 export enum ModalType {
   FORM_CREATE = 'form_create',
+  FORM_EDIT = 'form_edit',
   SHOW_WINNER = 'show_winner',
   DEFAULT = 'default',
 }

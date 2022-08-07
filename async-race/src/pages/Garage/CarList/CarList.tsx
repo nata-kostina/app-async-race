@@ -13,12 +13,13 @@ interface CarTableProps {
   deleteCar: (id: string) => void,
   hasBeenReset: boolean,
   setHasBeenReset: Dispatch<SetStateAction<boolean>>,
+  onEditClicked: (car: Car) => void;
 }
 function CarList({
-  cars, updateCar, deleteCar, hasBeenReset, setHasBeenReset,
+  cars, updateCar, deleteCar, hasBeenReset, setHasBeenReset, onEditClicked,
 }: CarTableProps) {
   const [carToEdit, setCarToEdit] = useState<Car>({} as Car);
-  const onEditClicked = (car: Car) => { setCarToEdit(car); };
+
   const onDeleteClicked = (carId: number) => { deleteCar(carId.toString()); };
   const onCarUpdated = (values: UpdateCarParams) => {
     updateCar(values, carToEdit);

@@ -8,9 +8,8 @@ import StyledForm from './styles';
 
 interface FormCreateProps {
   createCar: (values: UpdateCarParams) => Promise<void>;
-  closeModal: () => void;
 }
-function FormCreate({ createCar, closeModal }: FormCreateProps) {
+function FormCreate({ createCar }: FormCreateProps) {
   const [form, setForm] = useState({
     name: '',
     color: '#000000',
@@ -24,8 +23,7 @@ function FormCreate({ createCar, closeModal }: FormCreateProps) {
         <Flex direction="column" align="end" justify="space-between">
           <FormInput id="name" label="Name" type="text" val={form.name} placeholder="Enter a name..." onChanged={onNameChanged} />
           <FormInput id="color" label="Color" type="color" val={form.color} onChanged={onColorChanged} />
-          <StyledBtn type="button" onClick={() => { createCar(form); closeModal(); }}>Create</StyledBtn>
-          {/* <StyledBtnClose type="button" onClick={() => closeModal()}>X</StyledBtnClose> */}
+          <StyledBtn type="button" onClick={() => { createCar(form); }}>Create</StyledBtn>
         </Flex>
       </Form>
     </StyledForm>

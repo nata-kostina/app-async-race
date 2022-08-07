@@ -4,7 +4,7 @@ import FormInput from '../../../components/ui/Form/FormInput';
 import { Car, UpdateCarParams } from '../../../types/types';
 
 interface FormEditProps {
-  onCarUpdated: (values: UpdateCarParams) => void;
+  onCarUpdated: (values: UpdateCarParams, car: Car) => void;
   carToEdit: Car;
 }
 
@@ -21,7 +21,7 @@ function FormEdit({ onCarUpdated, carToEdit }: FormEditProps) {
     <Form id="form_edit">
       <FormInput id="name" label="Name" type="text" val={form.name} placeholder="Enter a new name..." onChanged={onNameChanged} />
       <FormInput id="color" label="Color" type="color" val={form.color} onChanged={onColorChanged} />
-      <button type="button" onClick={() => onCarUpdated(form)}>Edit</button>
+      <button type="button" onClick={() => onCarUpdated(form, carToEdit)}>Edit</button>
     </Form>
   );
 }
