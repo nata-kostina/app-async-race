@@ -4,10 +4,11 @@ export const StyledTable = styled.table`
   margin: 0 auto;
   font-family: 'DIN-Regular', sans-serif;
   font-size: 16px;
+  width: 100%;
 
   & tr {
     border-radius: 3px;
-    padding: 10px 35px;
+    padding: 10px 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,9 +22,11 @@ export const StyledTable = styled.table`
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 140px;
-    padding: 0 10px;
-  }
+    padding: 0 5px;
+    flex-shrink: 1;
+    flex-grow: 1;
+    max-width: 150px;
+}
 `;
 
 export const StyledBtn = styled.button`
