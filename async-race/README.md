@@ -30,7 +30,6 @@ This SPA is a mini car racing game that has three views: Main, Garage and Winner
 ```sh
 npm run start
 ```
-npm run start
 ## Specification
 
 [https://github.com/rolling-scopes-school/tasks/blob/master/tasks/async-race.md](https://github.com/rolling-scopes-school/tasks/blob/master/tasks/async-race.md "Spec")
