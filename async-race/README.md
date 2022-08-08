@@ -1,5 +1,5 @@
 # App "Async Race"
-## [Deploy](https://nata-kostina.github.io/app-async-race/async-race/ "Async Race")
+## [Deploy](https://benevolent-syrniki-350737.netlify.app/ "Async Race")
 ***
 ## Description
 
@@ -24,7 +24,13 @@ This SPA is a mini car racing game that has three views: Main, Garage and Winner
 
 ## Backend
 
-[https://github.com/mikhama/async-race-api](https://github.com/mikhama/async-race-api)
+1. Clone the repo with server [https://github.com/mikhama/async-race-api](https://github.com/mikhama/async-race-api)
+
+2. Run server with 
+```sh
+npm run start
+```
+npm run start
 ## Specification
 
 [https://github.com/rolling-scopes-school/tasks/blob/master/tasks/async-race.md](https://github.com/rolling-scopes-school/tasks/blob/master/tasks/async-race.md "Spec")
