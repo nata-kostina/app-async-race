@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React, { ChangeEvent } from 'react';
-import { FormInputProps } from '../../../types/types';
-import Flex from '../../Flex';
+import { Flex } from '../../styles/GlobalStyles';
+import { FormInputProps } from '../../types/types';
 import { StyledInput, StyledLabel } from './styles';
 
 function FormInput({

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {
   useState, Dispatch, SetStateAction, useContext,
 } from 'react';
-import Pagination from '../../../components/ui/Pagination/Pagination';
+import Pagination from '../../../components/Pagination/Pagination';
 import {
   Car, UpdateCarParams, WinnerCar,
   ModalType,
@@ -12,7 +11,6 @@ import FormCreate from '../FormCreate/FormCreate';
 import {
   generateRandomCars,
 } from '../../../utils/utils';
-import Flex from '../../../components/Flex';
 import CarList from '../CarList/CarList';
 import { Container, StyledBtn, StyledMain } from './styles';
 import { StateContext } from '../../../state/State';
@@ -23,9 +21,10 @@ import useHandleWinner from '../hooks/useHandleWinner';
 import useFetchCars from '../hooks/useFetchCars';
 import { ActionTypes } from '../../../state/types';
 import { useToggleBtn } from '../../../hooks/GeneralHooks';
-import Portal from '../../../components/ui/Modal/Portal';
+import Portal from '../../../components/Modal/Portal';
 import FormEdit from '../FormEdit/FormEdit';
 import addToLogs from '../../../logs/log';
+import { Flex } from '../../../styles/GlobalStyles';
 
 function GarageMain() {
   const { state, dispatch } = useContext(StateContext);
@@ -35,9 +34,11 @@ function GarageMain() {
   const [hasBeenRaceStarted, setHasBeenRaceStarted] = useState(false);
   const [isPaginationDisabled, togglePaginationBtns] = useToggleBtn() as [boolean, () => void];
   const [cars, setCars, totalCarsNum, totalPagesNum] = useFetchCars(state.currentGaragePage, hasBeenUpdated) as [Car[], Dispatch<SetStateAction<Car[]>>, string, number];
+  const [carToEdit, setCarToEdit] = useState() as [Car, Dispatch<SetStateAction<Car>>];
+
+  const onPageChanged = (value: number) => dispatch({ type: ActionTypes.SET_GARAGE_PAGE, payload: value });
   useRaceAll(cars, state.isRaceStarted);
   useGetWinner(cars, setHasBeenRaceStarted);
-  const onPageChanged = (value: number) => dispatch({ type: ActionTypes.SET_GARAGE_PAGE, payload: value });
   const onFinishRaceActions = () => {
     setIsRaceBtnDisabled(false);
     togglePaginationBtns();
@@ -93,12 +94,12 @@ function GarageMain() {
   const closeModal = () => {
     dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: false });
   };
-  const [carToEdit, setCarToEdit] = useState() as [Car, Dispatch<SetStateAction<Car>>];
   const onEditClicked = (car: Car) => {
     setCarToEdit(car);
     dispatch({ type: ActionTypes.SET_MODAL_VISIBILITY, payload: true });
     dispatch({ type: ActionTypes.SET_MODAL, payload: ModalType.FORM_EDIT });
   };
+
   return (
     <StyledMain>
       <Container>
@@ -155,7 +156,6 @@ function GarageMain() {
       </Container>
       <CarList
         cars={cars}
-        updateCar={updateCar}
         deleteCar={deleteCar}
         hasBeenReset={hasBeenReset}
         setHasBeenReset={setHasBeenReset}

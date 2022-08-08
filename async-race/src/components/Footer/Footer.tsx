@@ -1,7 +1,7 @@
 import React from 'react';
-import Flex from '../Flex';
 import { ImgContainer, StyledFooter } from './styles';
 import Img from '../../assets/images/footer-img.png';
+import { Flex } from '../../styles/GlobalStyles';
 
 function Footer() {
   return (

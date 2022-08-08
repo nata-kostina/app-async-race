@@ -1,16 +1,16 @@
 import React, {
   useContext,
 } from 'react';
-import Pagination from '../../../components/ui/Pagination/Pagination';
+import Pagination from '../../../components/Pagination/Pagination';
 import { StateContext } from '../../../state/State';
 import {
   WinnerForStats,
 } from '../../../types/types';
 import WinnersList from '../WinnersTable/WinnersTable';
 import StyledMain, { Container } from './styles';
-import Flex from '../../../components/Flex';
 import useFetchWinners from '../hooks/useFetchWinners';
 import { ActionTypes } from '../../../state/types';
+import { Flex } from '../../../styles/GlobalStyles';
 
 function WinnersMain() {
   const { state, dispatch } = useContext(StateContext);

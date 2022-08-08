@@ -1,7 +1,7 @@
 import { baseUrl } from '../data/constants';
 import { FetchRequest } from '../types/types';
 
-const makeUrl = (request: FetchRequest) => {
+const makeUrl = (request: FetchRequest): string => {
   const url = new URL(`${baseUrl}/${request.url}`);
   if (request.queryParams) {
     const entries = Object.entries(request.queryParams);
@@ -13,7 +13,7 @@ const makeUrl = (request: FetchRequest) => {
   return url.toString();
 };
 
-const handleResponse = (response: Response) => {
+const handleResponse = (response: Response): Response => {
   if (!response.ok) throw new Error(`Ooops! ${response.status} ${response.statusText}`);
   return response;
 };

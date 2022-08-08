@@ -1,5 +1,5 @@
 import React from 'react';
-import Flex from '../Flex';
+import { Flex } from '../../styles/GlobalStyles';
 import Logo from '../Logo/Logo';
 import Navigation from '../Navigation/Navigation';
 

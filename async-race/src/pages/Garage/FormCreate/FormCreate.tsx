@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Flex from '../../../components/Flex';
-import Form from '../../../components/ui/Form/Form';
-import FormInput from '../../../components/ui/Form/FormInput';
-import { StyledBtn } from '../../../components/ui/Modal/styles';
+import Form from '../../../components/Form/Form';
+import FormInput from '../../../components/Form/FormInput';
+import { StyledBtn } from '../../../components/Modal/styles';
+import { Flex } from '../../../styles/GlobalStyles';
 import { UpdateCarParams } from '../../../types/types';
 import StyledForm from './styles';
 

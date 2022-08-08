@@ -6,15 +6,15 @@ import {
 } from '../../../types/types';
 import CarIcon from '../CarIcon/CarIcon';
 import {
-  FlagFinish, StyledBtn, StyledLi, StyledName, StyledStreet,
+  FlagFinish, MovingContainer, StyledBtn, StyledLi, StyledName, StyledStreet,
 } from './styles';
-import Flex from '../../../components/Flex';
 import { colorStart, colorStop } from '../../../data/constants';
 import { StateContext } from '../../../state/State';
 import useStartDrive from '../hooks/useStartDrive';
 import useStartRace from '../hooks/useStartRace';
 import useStopDrive from '../hooks/useStopDrive';
 import { useToggleButtons } from '../../../hooks/GeneralHooks';
+import { Flex } from '../../../styles/GlobalStyles';
 
 interface CarItemProps {
   car: Car;
@@ -44,13 +44,13 @@ function CarItem({
     }
   }, [hasBeenReset]);
 
-  const onStartClicked = async () => {
+  const onStartClicked = async (): Promise<void> => {
     setHasBeenDriven(false);
     setIsDriving(true);
     toggleButtons();
   };
 
-  const onStopClicked = async () => {
+  const onStopClicked = async (): Promise<void> => {
     setHasBeenDriven(true);
     setIsDriving(false);
     toggleButtons();
@@ -86,9 +86,9 @@ function CarItem({
         </Flex>
       </Flex>
       <StyledStreet>
-        <div ref={carRef} className="moving-container">
+        <MovingContainer ref={carRef}>
           <CarIcon color={car.color} />
-        </div>
+        </MovingContainer>
         <FlagFinish />
       </StyledStreet>
       <Flex

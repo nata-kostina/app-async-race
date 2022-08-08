@@ -65,5 +65,21 @@ export const StyledName = styled.h2`
   font-family: 'DINRegular';
   font-size: 20px;
   color: #FFFFFF;
+`;
 
+export const MovingContainer = styled.div`
+transition: translate 4s linear;
+&.moving {
+  animation-name: slidein;
+  animation-duration: 4s;
+}
+@keyframes slidein {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
 `;

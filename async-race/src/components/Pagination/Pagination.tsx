@@ -1,5 +1,5 @@
 import React from 'react';
-import Flex from '../../Flex';
+import { Flex } from '../../styles/GlobalStyles';
 import PaginationItem from './PaginationItem';
 import { StyledButton } from './styles';
 
@@ -15,12 +15,12 @@ function Pagination({
 }: PaginationProps) {
   const pages = [];
 
-  const onPrevPage = () => {
+  const onPrevPage = (): void => {
     if (currentPage !== 1) {
       onPageChanged(currentPage - 1);
     }
   };
-  const onNextPage = () => {
+  const onNextPage = (): void => {
     if (currentPage <= total - 1) {
       onPageChanged(currentPage + 1);
     }

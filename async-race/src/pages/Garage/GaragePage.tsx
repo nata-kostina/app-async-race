@@ -11,7 +11,6 @@ function GaragePage() {
       <GarageMain />
       <Footer />
     </Container>
-
   );
 }
 

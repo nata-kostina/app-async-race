@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import Flex from '../../../components/Flex';
 import { StateContext } from '../../../state/State';
 import { ActionTypes } from '../../../state/types';
+import { Flex } from '../../../styles/GlobalStyles';
 import { OrderType, SortType, WinnerForStats } from '../../../types/types';
 import WinnersItem from '../WinnerItem/WinnerItem';
 import { StyledTable, StyledBtn } from './styles';
