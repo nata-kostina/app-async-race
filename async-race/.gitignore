@@ -22,19 +22,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-src/pages/Test.tsx
-src/index.css
-src/App.css
-
-/.eslintrc.js
-
-/public
-/package-lock.json
-/package.json
-/README.md
-/tsconfig.eslint.json
-/tsconfig.json
-/src/assets
-
-
-src/pages/Example.tsx
+README.md
