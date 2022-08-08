@@ -23,7 +23,7 @@ import { ActionTypes } from '../../../state/types';
 import { useToggleBtn } from '../../../hooks/GeneralHooks';
 import Portal from '../../../components/Modal/Portal';
 import FormEdit from '../FormEdit/FormEdit';
-import addToLogs from '../../../logs/log';
+import addToLogs from '../../../appLogs/log';
 import { Flex } from '../../../styles/GlobalStyles';
 
 function GarageMain() {

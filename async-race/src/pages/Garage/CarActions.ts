@@ -4,7 +4,7 @@ import {
 import { calculateTime } from '../../utils/utils';
 import AppLoader from '../../services/AppLoader';
 import { startAnimation, stopAnimation } from '../../utils/animation';
-import addToLogs from '../../logs/log';
+import addToLogs from '../../appLogs/log';
 
 export const startEngine = async (id: string): Promise<{
   id: string;

@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import addToLogs from '../../../logs/log';
+import addToLogs from '../../../appLogs/log';
 import AppLoader from '../../../services/AppLoader';
 import { StateContext } from '../../../state/State';
 import { ActionTypes } from '../../../state/types';
